@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         display: ["Outfit", "sans-serif"],
         body: ["Plus Jakarta Sans", "sans-serif"],
+        serif: ["Cormorant Garamond", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",

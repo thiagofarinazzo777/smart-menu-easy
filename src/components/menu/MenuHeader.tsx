@@ -1,28 +1,99 @@
+import { useState, useEffect } from "react";
 import { Tables } from "@/integrations/supabase/types";
-import { Flame } from "lucide-react";
+import { Flame, Clock, Bike } from "lucide-react";
+import heroFireBg from "@/assets/hero-fire-bg.jpg";
 
 interface MenuHeaderProps {
   config: Tables<"restaurant_config"> | null;
 }
 
+function useRestaurantStatus() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const check = () => {
+      const now = new Date();
+      const hour = now.getHours();
+      setIsOpen(hour >= 19 && hour < 23);
+    };
+    check();
+    const interval = setInterval(check, 60_000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return isOpen;
+}
+
 export function MenuHeader({ config }: MenuHeaderProps) {
+  const isOpen = useRestaurantStatus();
+
   return (
     <>
-      {/* Hero Banner */}
-      <div className="w-full h-[180px] relative overflow-hidden bg-gradient-to-br from-[hsl(0,0%,10%)] via-[hsl(15,80%,25%)] to-[hsl(30,90%,45%)]">
-        {/* Subtle texture overlay */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(25,90%,50%,0.3),transparent_60%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,hsl(0,70%,30%,0.4),transparent_60%)]" />
-        
-        <div className="relative z-10 h-full max-w-md mx-auto px-5 flex flex-col justify-center">
-          <div className="flex items-center gap-2 mb-2">
-            <Flame className="w-7 h-7 text-[hsl(30,90%,55%)]" />
-            <h1 className="text-2xl font-display font-extrabold tracking-tight text-white">
-              Ouro & Brasa
-            </h1>
+      {/* Hero Banner — Fire & Wood Oven */}
+      <div className="w-full relative overflow-hidden" style={{ height: 260 }}>
+        {/* Background image */}
+        <img
+          src={heroFireBg}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Dark overlay with fire gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1a0000] via-[#3d0000cc] to-[#1a0000aa]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#8b1a0033] via-transparent to-[#ff450022]" />
+        {/* Grain texture overlay */}
+        <div
+          className="absolute inset-0 opacity-30 mix-blend-overlay"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E")`,
+          }}
+        />
+
+        {/* Content */}
+        <div className="relative z-10 h-full max-w-md mx-auto px-5 flex flex-col items-center justify-center text-center">
+          {/* Restaurant name */}
+          <h1 className="font-serif italic font-bold text-4xl tracking-wide leading-tight"
+              style={{
+                color: "#d4a017",
+                textShadow: "0 0 20px #ff450066, 0 2px 8px #8b1a0088",
+              }}>
+            Ouro & Brasa
+          </h1>
+          <p className="text-xs tracking-[0.25em] uppercase mt-1 font-body font-medium"
+             style={{ color: "#f5c842cc" }}>
+            Pizzaria Artesanal • Forno a Lenha
+          </p>
+
+          {/* Open / Closed badge */}
+          <div className="mt-4">
+            {isOpen ? (
+              <span className="inline-flex items-center gap-2 bg-[#15803d]/80 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-300 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
+                </span>
+                Aberto agora
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-2 bg-[#7f1d1d]/80 backdrop-blur-sm text-white/70 text-xs font-semibold px-3 py-1.5 rounded-full">
+                <span className="h-2 w-2 rounded-full bg-red-400/60" />
+                Fechado · Abre às 19:00
+              </span>
+            )}
           </div>
-          <p className="text-sm text-white/70 font-body leading-relaxed max-w-[280px]">
-            Feita com fogo de verdade, entregue com amor de sempre
+
+          {/* Delivery info pills */}
+          <div className="mt-3 flex items-center gap-2 flex-wrap justify-center">
+            <span className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm text-white/90 text-[11px] font-medium px-3 py-1.5 rounded-full border border-white/10">
+              <Bike className="w-3.5 h-3.5" />
+              Entrega · 40–70 min
+            </span>
+            <span className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm text-white/90 text-[11px] font-medium px-3 py-1.5 rounded-full border border-white/10">
+              <Clock className="w-3.5 h-3.5" />
+              Hoje
+            </span>
+          </div>
+          <p className="mt-2 text-[11px] text-white/50 font-body">
+            💰 Pedido mínimo R$ 30,00
           </p>
         </div>
       </div>
@@ -41,7 +112,7 @@ export function MenuHeader({ config }: MenuHeaderProps) {
               <Flame className="w-4 h-4 text-primary-foreground" />
             </div>
           )}
-          <span className="text-sm font-bold truncate">{config?.name || "Restaurante"}</span>
+          <span className="text-sm font-bold truncate">{config?.name || "Ouro & Brasa"}</span>
         </div>
       </header>
     </>
