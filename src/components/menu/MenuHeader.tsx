@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Tables } from "@/integrations/supabase/types";
-import { Flame, Clock, Bike } from "lucide-react";
+import { Flame, Clock, Bike, ChevronDown } from "lucide-react";
 import heroFireBg from "@/assets/hero-fire-bg.jpg";
 
 interface MenuHeaderProps {
