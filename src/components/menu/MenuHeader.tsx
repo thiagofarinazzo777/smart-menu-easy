@@ -50,7 +50,6 @@ export function MenuHeader({ config }: MenuHeaderProps) {
 
         {/* Content */}
         <div className="relative z-10 h-full max-w-md mx-auto px-5 flex flex-col items-center justify-center text-center">
-          {/* Restaurant name */}
           <h1 className="font-serif italic font-bold text-4xl tracking-wide leading-tight"
               style={{
                 color: "#d4a017",
@@ -62,37 +61,43 @@ export function MenuHeader({ config }: MenuHeaderProps) {
              style={{ color: "#f5c842cc" }}>
             Pizzaria Artesanal • Forno a Lenha
           </p>
+        </div>
+      </div>
 
-          {/* Open / Closed badge */}
-          <div className="mt-4">
-            {isOpen ? (
-              <span className="inline-flex items-center gap-2 bg-[#15803d]/80 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-300 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
-                </span>
-                Aberto agora
+      {/* Info section below hero */}
+      <div className="w-full" style={{ backgroundColor: "#f5f5f5" }}>
+        <div className="max-w-md mx-auto px-5 py-4 flex flex-col items-center gap-3">
+          {/* Status badge */}
+          {isOpen ? (
+            <span className="inline-flex items-center gap-2 bg-green-600 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-300 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
               </span>
-            ) : (
-              <span className="inline-flex items-center gap-2 bg-[#7f1d1d]/80 backdrop-blur-sm text-white/70 text-xs font-semibold px-3 py-1.5 rounded-full">
-                <span className="h-2 w-2 rounded-full bg-red-400/60" />
-                Fechado · Abre às 19:00
-              </span>
-            )}
-          </div>
+              Aberto agora
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-2 bg-gray-200 text-gray-600 text-xs font-semibold px-3 py-1.5 rounded-full">
+              <span className="h-2 w-2 rounded-full bg-red-400" />
+              Fechado · Abre às 19:00
+            </span>
+          )}
 
-          {/* Delivery info pills */}
-          <div className="mt-3 flex items-center gap-2 flex-wrap justify-center">
-            <span className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm text-white/90 text-[11px] font-medium px-3 py-1.5 rounded-full border border-white/10">
+          {/* Delivery pills */}
+          <div className="flex items-center gap-2">
+            <button className="inline-flex items-center gap-1.5 bg-white text-gray-700 text-xs font-medium px-4 py-2 rounded-full border border-gray-200 shadow-sm">
               <Bike className="w-3.5 h-3.5" />
-              Entrega · 40–70 min
-            </span>
-            <span className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm text-white/90 text-[11px] font-medium px-3 py-1.5 rounded-full border border-white/10">
+              Entrega
+              <ChevronDown className="w-3 h-3 text-gray-400" />
+            </button>
+            <button className="inline-flex items-center gap-1.5 bg-white text-gray-700 text-xs font-medium px-4 py-2 rounded-full border border-gray-200 shadow-sm">
               <Clock className="w-3.5 h-3.5" />
-              Hoje
-            </span>
+              Hoje · 40–70 min
+            </button>
           </div>
-          <p className="mt-2 text-[11px] text-white/50 font-body">
+
+          {/* Minimum order */}
+          <p className="text-[11px] text-gray-500 font-body">
             💰 Pedido mínimo R$ 30,00
           </p>
         </div>
