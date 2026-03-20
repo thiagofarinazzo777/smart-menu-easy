@@ -360,46 +360,57 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
           {/* DELIVERY */}
           {step === "delivery" && (
             <div className="space-y-3">
-              <div onClick={() => setDeliveryType("entrega")} className={`p-4 rounded-xl border-2 cursor-pointer ${deliveryType === "entrega" ? "border-primary" : "border-gray-200"}`}>
+              {/* Entrega option */}
+              <div
+                onClick={() => setDeliveryType("entrega")}
+                className={`p-4 rounded-xl border-2 cursor-pointer transition-colors ${deliveryType === "entrega" ? "border-primary" : "border-gray-200"}`}
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Bike className="w-5 h-5 text-primary" />
-                    <span className="font-semibold">Receber no seu endereço</span>
+                    <span className="font-semibold text-sm">Receber no seu endereço</span>
                   </div>
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${deliveryType === "entrega" ? "border-primary" : "border-gray-300"}`}>
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${deliveryType === "entrega" ? "border-primary" : "border-gray-300"}`}>
                     {deliveryType === "entrega" && <div className="w-3 h-3 rounded-full bg-primary" />}
                   </div>
                 </div>
-                {deliveryType === "entrega" && (
-                  <div className="mt-3 space-y-2">
-                    <div className="relative">
-                      <Input placeholder="CEP *" value={address.cep} onChange={handleCepChange} maxLength={9} />
-                      {loadingCep && <Loader2 className="w-4 h-4 animate-spin absolute right-3 top-3 text-muted-foreground" />}
-                    </div>
-                    <div className="flex gap-2">
-                      <Input placeholder="Rua *" value={address.rua} onChange={(e) => setAddress({ ...address, rua: e.target.value })} className="flex-1" />
-                      <Input placeholder="Nº *" value={address.numero} onChange={(e) => setAddress({ ...address, numero: e.target.value })} className="w-20" />
-                    </div>
-                    <Input placeholder="Bairro *" value={address.bairro} onChange={(e) => setAddress({ ...address, bairro: e.target.value })} />
-                    <Input placeholder="Complemento" value={address.complemento} onChange={(e) => setAddress({ ...address, complemento: e.target.value })} />
-                    <Input placeholder="Ponto de referência" value={address.referencia} onChange={(e) => setAddress({ ...address, referencia: e.target.value })} />
-                    <div className="flex gap-2">
-                      <Input placeholder="Cidade *" value={address.cidade} onChange={(e) => setAddress({ ...address, cidade: e.target.value })} className="flex-1" />
-                      <Input placeholder="UF *" value={address.estado} onChange={(e) => setAddress({ ...address, estado: e.target.value })} className="w-20" />
-                    </div>
-                    <div className="flex justify-between text-sm pt-1">
-                      <span className="text-muted-foreground">Taxa de entrega</span>
-                      <span className="text-green-600 font-semibold">Grátis</span>
-                    </div>
-                  </div>
-                )}
               </div>
-              <div onClick={() => setDeliveryType("retirada")} className={`p-4 rounded-xl border-2 cursor-pointer flex items-center justify-between ${deliveryType === "retirada" ? "border-primary" : "border-gray-200"}`}>
+
+              {/* Address fields shown separately when entrega is selected */}
+              {deliveryType === "entrega" && (
+                <div className="space-y-2 pl-1">
+                  <div className="relative">
+                    <Input placeholder="CEP *" value={address.cep} onChange={handleCepChange} maxLength={9} inputMode="numeric" />
+                    {loadingCep && <Loader2 className="w-4 h-4 animate-spin absolute right-3 top-3 text-muted-foreground" />}
+                  </div>
+                  <div className="flex gap-2">
+                    <Input placeholder="Rua *" value={address.rua} onChange={(e) => setAddress({ ...address, rua: e.target.value })} className="flex-1" />
+                    <Input placeholder="Nº *" value={address.numero} onChange={(e) => setAddress({ ...address, numero: e.target.value })} className="w-20" />
+                  </div>
+                  <Input placeholder="Bairro *" value={address.bairro} onChange={(e) => setAddress({ ...address, bairro: e.target.value })} />
+                  <Input placeholder="Complemento" value={address.complemento} onChange={(e) => setAddress({ ...address, complemento: e.target.value })} />
+                  <Input placeholder="Ponto de referência" value={address.referencia} onChange={(e) => setAddress({ ...address, referencia: e.target.value })} />
+                  <div className="flex gap-2">
+                    <Input placeholder="Cidade *" value={address.cidade} onChange={(e) => setAddress({ ...address, cidade: e.target.value })} className="flex-1" />
+                    <Input placeholder="UF *" value={address.estado} onChange={(e) => setAddress({ ...address, estado: e.target.value })} className="w-20" />
+                  </div>
+                  <div className="flex justify-between text-sm pt-1">
+                    <span className="text-muted-foreground">Taxa de entrega</span>
+                    <span className="text-green-600 font-semibold">Grátis</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Retirada option */}
+              <div
+                onClick={() => setDeliveryType("retirada")}
+                className={`p-4 rounded-xl border-2 cursor-pointer transition-colors flex items-center justify-between ${deliveryType === "retirada" ? "border-primary" : "border-gray-200"}`}
+              >
                 <div className="flex items-center gap-3">
                   <PersonStanding className="w-5 h-5 text-primary" />
-                  <span className="font-semibold">Retirar no estabelecimento</span>
+                  <span className="font-semibold text-sm">Retirar no estabelecimento</span>
                 </div>
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${deliveryType === "retirada" ? "border-primary" : "border-gray-300"}`}>
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${deliveryType === "retirada" ? "border-primary" : "border-gray-300"}`}>
                   {deliveryType === "retirada" && <div className="w-3 h-3 rounded-full bg-primary" />}
                 </div>
               </div>
