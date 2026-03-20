@@ -29,7 +29,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
   const { items, updateQuantity, removeItem, clearCart, total } = useCart();
   const [step, setStep] = useState<Step>("cart");
   const [loadingCep, setLoadingCep] = useState(false);
-  const [deliveryType, setDeliveryType] = useState<DeliveryType>("entrega");
+  const [deliveryType, setDeliveryType] = useState<DeliveryType | null>(null);
   const [paymentType, setPaymentType] = useState<PaymentType>(null);
   const [troco, setTroco] = useState("");
   const [showPix, setShowPix] = useState(false);
@@ -110,7 +110,8 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
   };
 
   const handleGoToConfirmation = () => {
-    if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.bairro)) {
+    if (!deliveryType) { toast({ title: "Selecione o tipo de entrega", variant: "destructive" }); return; }
+if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.bairro)) {
       toast({ title: "Preencha o endereço completo", variant: "destructive" }); return;
     }
     setStep("confirmation");
