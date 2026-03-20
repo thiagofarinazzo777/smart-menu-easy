@@ -170,7 +170,7 @@ if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.b
 
   return (
     <Drawer open={open} onOpenChange={(v) => { if (!v) { setStep("cart"); setShowPix(false); setEditingItem(null); } onOpenChange(v); }}>
-      <DrawerContent className="h-screen flex flex-col">
+      <DrawerContent className="min-h-[95dvh] flex flex-col">
 
         {/* PIX Screen */}
         {showPix && (
