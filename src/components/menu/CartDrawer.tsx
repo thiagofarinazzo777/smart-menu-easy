@@ -7,6 +7,7 @@ import { useCart } from "@/hooks/useCart";
 import { Minus, Plus, ShoppingBag, MapPin, Loader2, Check, Bike, PersonStanding, CreditCard, Banknote, QrCode, Pencil, Tag, X, Copy, Share2, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
+import { formatBrazilianPhone, isValidBrazilianPhone } from "@/lib/phone-mask";
 
 interface CartDrawerProps {
   open: boolean;
