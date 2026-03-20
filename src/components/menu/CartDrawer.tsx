@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -50,6 +50,13 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
 
   const formatPrice = (price: number) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(price);
+
+  const handleClose = () => {
+    setStep("cart");
+    setShowPix(false);
+    setEditingItem(null);
+    onOpenChange(false);
+  };
 
   const copyPixKey = () => {
     navigator.clipboard.writeText(PIX_KEY).then(() => {
@@ -145,6 +152,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
     setShowPix(false); setCupom(""); setObservations({});
     setAddress({ cep: "", rua: "", numero: "", bairro: "", complemento: "", referencia: "", cidade: "", estado: "" });
     setStep("cart");
+    setDeliveryType(null);
     onOpenChange(false);
   };
 
@@ -169,14 +177,13 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
   };
 
   return (
-    <Drawer open={open} onOpenChange={(v) => { if (!v) { setStep("cart"); setShowPix(false); setEditingItem(null); } onOpenChange(v); }}>
-      <DrawerContent className="flex flex-col" style={{ height: '92dvh' }}>
+    <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
+      <DialogContent className="p-0 gap-0 w-full h-full max-w-full max-h-full m-0 rounded-none sm:rounded-2xl sm:max-w-md sm:h-[92vh] sm:max-h-[92vh] flex flex-col overflow-hidden">
 
         {/* PIX Screen */}
         {showPix && (
-          <div className="absolute inset-0 z-50 bg-white flex flex-col p-6 rounded-t-2xl overflow-y-auto">
+          <div className="absolute inset-0 z-50 bg-white flex flex-col p-6 overflow-y-auto">
             <p className="text-center font-bold text-base uppercase tracking-widest text-gray-500 mb-6">PAGAMENTO</p>
-
             <div className="flex justify-center mb-4">
               <div className="w-28 h-28 rounded-full bg-red-50 flex items-center justify-center">
                 <div className="relative">
@@ -189,42 +196,32 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
                 </div>
               </div>
             </div>
-
             <h2 className="text-xl font-bold text-center mb-2">Pedido aguardando pagamento</h2>
             <p className="text-sm text-muted-foreground text-center mb-6">
               Copie o código abaixo para pagar via Pix em qualquer aplicativo habilitado:
             </p>
-
             <div className="border-2 border-dashed border-gray-300 rounded-xl p-3 flex items-center gap-2 mb-2">
               <p className="flex-1 text-sm text-gray-600 truncate font-mono">{PIX_KEY}</p>
-              <button
-                onClick={copyPixKey}
-                className={`p-2 rounded-lg transition-colors ${pixCopied ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
-              >
+              <button onClick={copyPixKey} className={`p-2 rounded-lg transition-colors ${pixCopied ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
                 {pixCopied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
               </button>
             </div>
-
             <div className="bg-orange-50 rounded-xl p-3 text-center mb-2">
               <p className="text-xs text-muted-foreground mb-1">Total a pagar</p>
               <p className="font-bold text-primary text-2xl">{formatPrice(total)}</p>
             </div>
-
             <p className="text-xs text-muted-foreground text-center mb-6">
               Após o pagamento, confirme abaixo para enviar seu pedido.
             </p>
-
             <Button onClick={copyPixKey} size="lg" className="w-full font-semibold mb-3">
               <Copy className="w-4 h-4 mr-2" />
               {pixCopied ? "Copiado!" : "Copiar código"}
             </Button>
-
             <button onClick={sharePixKey} className="w-full text-center text-primary font-semibold text-sm mb-4">
               <span className="flex items-center justify-center gap-2">
                 <Share2 className="w-4 h-4" /> Compartilhar código
               </span>
             </button>
-
             <Button onClick={() => { setShowPix(false); sendToWhatsApp(); }} variant="outline" className="w-full mb-2">
               Já paguei, enviar pedido
             </Button>
@@ -236,7 +233,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
 
         {/* Edit Item Screen */}
         {editingItem && (
-          <div className="absolute inset-0 z-50 bg-white flex flex-col p-6 rounded-t-2xl">
+          <div className="absolute inset-0 z-50 bg-white flex flex-col p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold">Editar item</h2>
               <button onClick={() => setEditingItem(null)}><X className="w-5 h-5" /></button>
@@ -258,25 +255,33 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
           </div>
         )}
 
-        <DrawerHeader className="pb-0">
+        {/* Header */}
+        <div className="px-4 pt-4 pb-0 flex-shrink-0">
           {step === "cart" ? (
-            <div className="flex items-center justify-between">
-              <DrawerTitle className="flex items-center gap-2">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-bold flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-primary" /> Sua Sacola
-              </DrawerTitle>
-              {items.length > 0 && (
-                <button onClick={() => clearCart()} className="text-xs text-muted-foreground">LIMPAR</button>
-              )}
+              </h2>
+              <div className="flex items-center gap-3">
+                {items.length > 0 && (
+                  <button onClick={() => clearCart()} className="text-xs text-muted-foreground">LIMPAR</button>
+                )}
+                <button onClick={handleClose}><X className="w-5 h-5 text-muted-foreground" /></button>
+              </div>
             </div>
           ) : (
-            <>
-              <DrawerTitle className="text-center">Checkout</DrawerTitle>
+            <div className="mb-0">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-lg font-bold">Checkout</h2>
+                <button onClick={handleClose}><X className="w-5 h-5 text-muted-foreground" /></button>
+              </div>
               <StepIndicator />
-            </>
+            </div>
           )}
-        </DrawerHeader>
+        </div>
 
-        <div className="px-4 overflow-y-auto pb-24" style={{ flex: '1 1 0', minHeight: 0 }}>
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto px-4 pb-4">
 
           {/* CART */}
           {step === "cart" && (
@@ -348,10 +353,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
           {/* DELIVERY */}
           {step === "delivery" && (
             <div className="space-y-3">
-              <div
-                onClick={() => setDeliveryType("entrega")}
-                className={`p-4 rounded-xl border-2 cursor-pointer transition-colors ${deliveryType === "entrega" ? "border-primary" : "border-gray-200"}`}
-              >
+              <div onClick={() => setDeliveryType("entrega")} className={`p-4 rounded-xl border-2 cursor-pointer transition-colors ${deliveryType === "entrega" ? "border-primary" : "border-gray-200"}`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Bike className="w-5 h-5 text-primary" />
@@ -387,10 +389,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
                 </div>
               )}
 
-              <div
-                onClick={() => setDeliveryType("retirada")}
-                className={`p-4 rounded-xl border-2 cursor-pointer transition-colors flex items-center justify-between ${deliveryType === "retirada" ? "border-primary" : "border-gray-200"}`}
-              >
+              <div onClick={() => setDeliveryType("retirada")} className={`p-4 rounded-xl border-2 cursor-pointer transition-colors flex items-center justify-between ${deliveryType === "retirada" ? "border-primary" : "border-gray-200"}`}>
                 <div className="flex items-center gap-3">
                   <PersonStanding className="w-5 h-5 text-primary" />
                   <span className="font-semibold text-sm">Retirar no estabelecimento</span>
@@ -489,7 +488,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
         </div>
 
         {/* FOOTER */}
-        <div className="px-4 pb-6 pt-2 space-y-2 border-t">
+        <div className="px-4 pb-6 pt-2 space-y-2 border-t flex-shrink-0">
           {step === "cart" && items.length > 0 && (
             <Button onClick={handleGoToDelivery} size="lg" className="w-full font-semibold">Continuar pedido</Button>
           )}
@@ -513,7 +512,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
           )}
         </div>
 
-      </DrawerContent>
-    </Drawer>
+      </DialogContent>
+    </Dialog>
   );
 }
