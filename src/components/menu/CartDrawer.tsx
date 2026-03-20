@@ -169,7 +169,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
 
   return (
     <Drawer open={open} onOpenChange={(v) => { if (!v) { setStep("cart"); setShowPix(false); setEditingItem(null); } onOpenChange(v); }}>
-      <DrawerContent className="max-h-[92vh] flex flex-col">
+      <DrawerContent className="h-[92vh] flex flex-col">
 
         {/* PIX Screen */}
         {showPix && (
@@ -288,7 +288,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
           )}
         </DrawerHeader>
 
-        <div className="px-4 flex-1 overflow-y-auto pb-4">
+        <div className="px-4 flex-1 overflow-y-auto pb-24">
 
           {/* CART */}
           {step === "cart" && (
