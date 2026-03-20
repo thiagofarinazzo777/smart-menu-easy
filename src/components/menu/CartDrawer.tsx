@@ -351,7 +351,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
                     </div>
                   )}
                   <Input placeholder="Seu nome *" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
-                  <Input placeholder="Telefone * (ex: 11999999999)" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} />
+                  <Input placeholder="Telefone * (11) 99999-9999" value={customerPhone} onChange={handlePhoneChange} inputMode="numeric" />
                 </>
               )}
             </div>
