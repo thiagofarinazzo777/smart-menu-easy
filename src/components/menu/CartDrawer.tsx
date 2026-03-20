@@ -170,7 +170,7 @@ if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.b
 
   return (
     <Drawer open={open} onOpenChange={(v) => { if (!v) { setStep("cart"); setShowPix(false); setEditingItem(null); } onOpenChange(v); }}>
-      <DrawerContent className="min-h-[95dvh] flex flex-col">
+      <DrawerContent className="flex flex-col" style={{ height: '92vh'
 
         {/* PIX Screen */}
         {showPix && (
@@ -289,7 +289,7 @@ if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.b
           )}
         </DrawerHeader>
 
-        <div className="px-4 flex-1 overflow-y-auto pb-24">
+        <div className="px-4 flex-1 overflow-y-auto pb-24" style={{ minHeight: 0 }}>
 
           {/* CART */}
           {step === "cart" && (
