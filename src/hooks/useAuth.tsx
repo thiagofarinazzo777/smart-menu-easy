@@ -3,9 +3,15 @@ import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
+interface Profile {
+  full_name: string;
+  phone: string;
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
+  profile: Profile | null;
   isAdmin: boolean;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
@@ -18,6 +24,7 @@ const ADMIN_ROLE: Database["public"]["Enums"]["app_role"] = "admin";
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -26,13 +33,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       _user_id: userId,
       _role: ADMIN_ROLE,
     });
-
     if (error) {
       console.error("Erro ao verificar role admin:", error.message);
       return false;
     }
-
     return Boolean(data);
+  }, []);
+
+  const fetchProfile = useCallback(async (userId: string) => {
+    const { data } = await supabase
+      .from("profiles")
+      .select("full_name, phone")
+      .eq("user_id", userId)
+      .single();
+    setProfile(data ? { full_name: data.full_name, phone: data.phone || "" } : null);
   }, []);
 
   useEffect(() => {
@@ -46,12 +60,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (!nextSession?.user) {
         setIsAdmin(false);
+        setProfile(null);
         setLoading(false);
         return;
       }
 
       setLoading(true);
-      const admin = await checkAdmin(nextSession.user.id);
+      const [admin] = await Promise.all([
+        checkAdmin(nextSession.user.id),
+        fetchProfile(nextSession.user.id),
+      ]);
 
       if (!isMounted) return;
       setIsAdmin(admin);
@@ -72,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, [checkAdmin]);
+  }, [checkAdmin, fetchProfile]);
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -82,10 +100,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     await supabase.auth.signOut();
     setIsAdmin(false);
+    setProfile(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isAdmin, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, profile, isAdmin, loading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
