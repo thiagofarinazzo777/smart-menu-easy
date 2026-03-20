@@ -111,7 +111,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
 
   const handleGoToConfirmation = () => {
     if (!deliveryType) { toast({ title: "Selecione o tipo de entrega", variant: "destructive" }); return; }
-if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.bairro)) {
+    if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.bairro)) {
       toast({ title: "Preencha o endereço completo", variant: "destructive" }); return;
     }
     setStep("confirmation");
@@ -170,14 +170,13 @@ if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.b
 
   return (
     <Drawer open={open} onOpenChange={(v) => { if (!v) { setStep("cart"); setShowPix(false); setEditingItem(null); } onOpenChange(v); }}>
-      <DrawerContent className="flex flex-col" style={{ height: '92vh'
+      <DrawerContent className="flex flex-col" style={{ height: '92dvh' }}>
 
         {/* PIX Screen */}
         {showPix && (
           <div className="absolute inset-0 z-50 bg-white flex flex-col p-6 rounded-t-2xl overflow-y-auto">
             <p className="text-center font-bold text-base uppercase tracking-widest text-gray-500 mb-6">PAGAMENTO</p>
 
-            {/* Ilustração PIX */}
             <div className="flex justify-center mb-4">
               <div className="w-28 h-28 rounded-full bg-red-50 flex items-center justify-center">
                 <div className="relative">
@@ -196,7 +195,6 @@ if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.b
               Copie o código abaixo para pagar via Pix em qualquer aplicativo habilitado:
             </p>
 
-            {/* Campo chave PIX com botão copiar */}
             <div className="border-2 border-dashed border-gray-300 rounded-xl p-3 flex items-center gap-2 mb-2">
               <p className="flex-1 text-sm text-gray-600 truncate font-mono">{PIX_KEY}</p>
               <button
@@ -216,29 +214,18 @@ if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.b
               Após o pagamento, confirme abaixo para enviar seu pedido.
             </p>
 
-            <Button
-              onClick={copyPixKey}
-              size="lg"
-              className="w-full font-semibold mb-3"
-            >
+            <Button onClick={copyPixKey} size="lg" className="w-full font-semibold mb-3">
               <Copy className="w-4 h-4 mr-2" />
               {pixCopied ? "Copiado!" : "Copiar código"}
             </Button>
 
-            <button
-              onClick={sharePixKey}
-              className="w-full text-center text-primary font-semibold text-sm mb-4"
-            >
+            <button onClick={sharePixKey} className="w-full text-center text-primary font-semibold text-sm mb-4">
               <span className="flex items-center justify-center gap-2">
                 <Share2 className="w-4 h-4" /> Compartilhar código
               </span>
             </button>
 
-            <Button
-              onClick={() => { setShowPix(false); sendToWhatsApp(); }}
-              variant="outline"
-              className="w-full mb-2"
-            >
+            <Button onClick={() => { setShowPix(false); sendToWhatsApp(); }} variant="outline" className="w-full mb-2">
               Já paguei, enviar pedido
             </Button>
             <Button variant="ghost" onClick={() => setShowPix(false)} className="w-full text-muted-foreground">
@@ -289,7 +276,7 @@ if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.b
           )}
         </DrawerHeader>
 
-        <div className="px-4 flex-1 overflow-y-auto pb-24" style={{ minHeight: 0 }}>
+        <div className="px-4 overflow-y-auto pb-24" style={{ flex: '1 1 0', minHeight: 0 }}>
 
           {/* CART */}
           {step === "cart" && (
@@ -361,7 +348,6 @@ if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.b
           {/* DELIVERY */}
           {step === "delivery" && (
             <div className="space-y-3">
-              {/* Entrega option */}
               <div
                 onClick={() => setDeliveryType("entrega")}
                 className={`p-4 rounded-xl border-2 cursor-pointer transition-colors ${deliveryType === "entrega" ? "border-primary" : "border-gray-200"}`}
@@ -377,7 +363,6 @@ if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.b
                 </div>
               </div>
 
-              {/* Address fields shown separately when entrega is selected */}
               {deliveryType === "entrega" && (
                 <div className="space-y-2 pl-1">
                   <div className="relative">
@@ -402,7 +387,6 @@ if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.b
                 </div>
               )}
 
-              {/* Retirada option */}
               <div
                 onClick={() => setDeliveryType("retirada")}
                 className={`p-4 rounded-xl border-2 cursor-pointer transition-colors flex items-center justify-between ${deliveryType === "retirada" ? "border-primary" : "border-gray-200"}`}
