@@ -98,9 +98,13 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
     setEditingItem(null);
   };
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomerPhone(formatBrazilianPhone(e.target.value));
+  };
+
   const handleGoToDelivery = () => {
     if (!customerName.trim()) { toast({ title: "Informe seu nome", variant: "destructive" }); return; }
-    if (!customerPhone.trim()) { toast({ title: "Informe seu telefone", variant: "destructive" }); return; }
+    if (!isValidBrazilianPhone(customerPhone)) { toast({ title: "Informe um telefone válido", description: "Ex: (11) 99999-9999", variant: "destructive" }); return; }
     if (items.length === 0) { toast({ title: "Carrinho vazio", variant: "destructive" }); return; }
     setStep("delivery");
   };
