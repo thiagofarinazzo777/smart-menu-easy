@@ -71,19 +71,19 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     onOpenChange(false);
   };
 
-  const copyPixKey = () => {
-    navigator.clipboard.writeText(PIX_KEY).then(() => {
+  const copyPixCode = () => {
+    navigator.clipboard.writeText(pixPayloadCode).then(() => {
       setPixCopied(true);
-      toast({ title: "Chave PIX copiada!" });
+      toast({ title: "Código PIX copiado!" });
       setTimeout(() => setPixCopied(false), 3000);
     });
   };
 
-  const sharePixKey = () => {
+  const sharePixCode = () => {
     if (navigator.share) {
-      navigator.share({ title: "Chave PIX", text: PIX_KEY });
+      navigator.share({ title: "Código PIX", text: pixPayloadCode });
     } else {
-      copyPixKey();
+      copyPixCode();
     }
   };
 
