@@ -20,6 +20,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState<TabId>("inicio");
   const [authOpen, setAuthOpen] = useState(false);
   const { user, profile, signOut } = useAuth();
+  const { isOpen: restaurantIsOpen, nextOpenInfo, hours } = useIsRestaurantOpen();
 
   const { data: config } = useQuery({
     queryKey: ["restaurant-config"],
