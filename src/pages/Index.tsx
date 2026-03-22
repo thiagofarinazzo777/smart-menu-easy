@@ -9,6 +9,7 @@ import { CartDrawer } from "@/components/menu/CartDrawer";
 import { CartFab } from "@/components/menu/CartFab";
 import { BottomNav, TabId } from "@/components/menu/BottomNav";
 import { CustomerAuthModal } from "@/components/menu/CustomerAuthModal";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User, LogOut } from "lucide-react";
 
