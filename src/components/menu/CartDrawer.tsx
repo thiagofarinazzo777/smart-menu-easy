@@ -105,6 +105,26 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     }
   };
 
+  const handleBairroChange = (value: string) => {
+    setAddress((prev) => ({ ...prev, bairro: value }));
+    if (!value.trim()) {
+      setDeliveryFee(null);
+      setNeighborhoodNotFound(false);
+      return;
+    }
+    const normalized = value.trim().toLowerCase();
+    const zone = deliveryZones.find(
+      (z: any) => z.neighborhood.toLowerCase() === normalized
+    );
+    if (zone) {
+      setDeliveryFee(Number(zone.fee));
+      setNeighborhoodNotFound(false);
+    } else {
+      setDeliveryFee(null);
+      setNeighborhoodNotFound(true);
+    }
+  };
+
   const buscarCep = async (cep: string) => {
     const cepLimpo = cep.replace(/\D/g, "");
     if (cepLimpo.length !== 8) return;
@@ -113,7 +133,11 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
       const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
       const data = await response.json();
       if (data.erro) { toast({ title: "CEP não encontrado", variant: "destructive" }); return; }
-      setAddress((prev) => ({ ...prev, rua: data.logradouro || "", bairro: data.bairro || "", cidade: data.localidade || "", estado: data.uf || "" }));
+      setAddress((prev) => ({ ...prev, rua: data.logradouro || "", cidade: data.localidade || "", estado: data.uf || "" }));
+      if (data.bairro) {
+        handleBairroChange(data.bairro);
+        setAddress((prev) => ({ ...prev, bairro: data.bairro }));
+      }
     } catch { toast({ title: "Erro ao buscar CEP", variant: "destructive" }); }
     finally { setLoadingCep(false); }
   };
