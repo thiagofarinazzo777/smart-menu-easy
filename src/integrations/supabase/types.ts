@@ -167,6 +167,7 @@ export type Database = {
           pix_key: string | null
           rating: number
           rating_count: string
+          restaurant_address: string
           updated_at: string
           whatsapp_number: string | null
           zone1_fee: number
@@ -185,6 +186,7 @@ export type Database = {
           pix_key?: string | null
           rating?: number
           rating_count?: string
+          restaurant_address?: string
           updated_at?: string
           whatsapp_number?: string | null
           zone1_fee?: number
@@ -203,6 +205,7 @@ export type Database = {
           pix_key?: string | null
           rating?: number
           rating_count?: string
+          restaurant_address?: string
           updated_at?: string
           whatsapp_number?: string | null
           zone1_fee?: number

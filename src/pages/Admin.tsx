@@ -166,6 +166,7 @@ export default function Admin() {
     zone3_fee: "12",
     delivery_time: "40-70 min",
     min_order: "30",
+    restaurant_address: "",
   });
   const [configLoaded, setConfigLoaded] = useState(false);
 
@@ -184,6 +185,7 @@ export default function Admin() {
         zone3_fee: String(config.zone3_fee ?? 12),
         delivery_time: (config as any).delivery_time ?? "40-70 min",
         min_order: String((config as any).min_order ?? 30),
+        restaurant_address: (config as any).restaurant_address ?? "",
       });
       setConfigLoaded(true);
     }
@@ -393,6 +395,18 @@ export default function Admin() {
                       />
                     </div>
                   </div>
+                </div>
+
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-primary" /> Endereço do Restaurante
+                  </h3>
+                  <p className="text-xs text-muted-foreground mb-2">Usado para calcular a taxa de entrega por distância.</p>
+                  <Input
+                    placeholder="Ex: Rua das Flores 123, Centro, Marília, SP"
+                    value={configForm.restaurant_address}
+                    onChange={(e) => setConfigForm((p) => ({ ...p, restaurant_address: e.target.value }))}
+                  />
                 </div>
 
                 <div className="border-t pt-4 mt-4">

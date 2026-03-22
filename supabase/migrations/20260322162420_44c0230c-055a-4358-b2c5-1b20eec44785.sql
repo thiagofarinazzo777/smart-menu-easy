@@ -1,0 +1,1 @@
+ALTER TABLE public.restaurant_config ADD COLUMN restaurant_address text NOT NULL DEFAULT '';

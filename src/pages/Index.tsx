@@ -222,7 +222,11 @@ const Index = () => {
         whatsappNumber={config?.whatsapp_number ?? ""}
         pixKey={(config as any)?.pix_key ?? ""}
         restaurantName={config?.name ?? "Ouro & Brasa"}
-        restaurantCity="Sao Paulo"
+        restaurantCity={(config as any)?.city ?? "Sao Paulo"}
+        restaurantAddress={(config as any)?.restaurant_address ?? ""}
+        zone1Fee={Number(config?.zone1_fee ?? 5)}
+        zone2Fee={Number(config?.zone2_fee ?? 8)}
+        zone3Fee={Number(config?.zone3_fee ?? 12)}
       />
 
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />

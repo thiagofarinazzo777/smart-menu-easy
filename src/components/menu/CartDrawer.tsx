@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { formatBrazilianPhone, isValidBrazilianPhone } from "@/lib/phone-mask";
 import { generatePixPayload } from "@/lib/pix-payload";
+import { geocodeAddress, haversineDistance, getZoneFee } from "@/lib/geocoding";
 
 interface CartDrawerProps {
   open: boolean;
@@ -19,6 +20,10 @@ interface CartDrawerProps {
   pixKey?: string;
   restaurantName?: string;
   restaurantCity?: string;
+  restaurantAddress?: string;
+  zone1Fee?: number;
+  zone2Fee?: number;
+  zone3Fee?: number;
 }
 
 type Step = "cart" | "delivery" | "confirmation" | "payment";
@@ -31,10 +36,11 @@ interface ItemEdit {
   observation: string;
 }
 
-export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", restaurantName = "Ouro & Brasa", restaurantCity = "Sao Paulo" }: CartDrawerProps) {
+export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", restaurantName = "Ouro & Brasa", restaurantCity = "Sao Paulo", restaurantAddress = "", zone1Fee = 5, zone2Fee = 8, zone3Fee = 12 }: CartDrawerProps) {
   const { items, updateQuantity, removeItem, clearCart, total } = useCart();
   const [step, setStep] = useState<Step>("cart");
   const [loadingCep, setLoadingCep] = useState(false);
+  const [calculatingFee, setCalculatingFee] = useState(false);
   const [deliveryType, setDeliveryType] = useState<DeliveryType | null>(null);
   const [paymentType, setPaymentType] = useState<PaymentType>(null);
   const [troco, setTroco] = useState("");
@@ -47,24 +53,12 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
   const [editingItem, setEditingItem] = useState<ItemEdit | null>(null);
   const [observations, setObservations] = useState<Record<string, string>>({});
   const [deliveryFee, setDeliveryFee] = useState<number | null>(null);
-  const [neighborhoodNotFound, setNeighborhoodNotFound] = useState(false);
+  const [feeUnavailable, setFeeUnavailable] = useState(false);
   const [address, setAddress] = useState({
     cep: "", rua: "", numero: "", bairro: "",
     complemento: "", referencia: "", cidade: "", estado: "",
   });
   const { toast } = useToast();
-
-  const { data: deliveryZones = [] } = useQuery({
-    queryKey: ["delivery-zones"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("delivery_zones")
-        .select("*")
-        .eq("is_active", true)
-        .order("neighborhood");
-      return data ?? [];
-    },
-  });
 
   const orderTotal = total + (deliveryType === "entrega" && deliveryFee !== null ? deliveryFee : 0);
 
@@ -105,25 +99,35 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     }
   };
 
-  const handleBairroChange = (value: string) => {
-    setAddress((prev) => ({ ...prev, bairro: value }));
-    if (!value.trim()) {
+  const calculateDeliveryFee = useCallback(async (fullAddress: string) => {
+    if (!restaurantAddress) {
+      setFeeUnavailable(true);
       setDeliveryFee(null);
-      setNeighborhoodNotFound(false);
       return;
     }
-    const normalized = value.trim().toLowerCase();
-    const zone = deliveryZones.find(
-      (z: any) => z.neighborhood.toLowerCase() === normalized
-    );
-    if (zone) {
-      setDeliveryFee(Number(zone.fee));
-      setNeighborhoodNotFound(false);
-    } else {
+    setCalculatingFee(true);
+    setFeeUnavailable(false);
+    try {
+      const [customerCoords, restaurantCoords] = await Promise.all([
+        geocodeAddress(fullAddress),
+        geocodeAddress(restaurantAddress),
+      ]);
+      if (!customerCoords || !restaurantCoords) {
+        setFeeUnavailable(true);
+        setDeliveryFee(null);
+        return;
+      }
+      const distance = haversineDistance(customerCoords, restaurantCoords);
+      const { fee } = getZoneFee(distance, zone1Fee, zone2Fee, zone3Fee);
+      setDeliveryFee(fee);
+      setFeeUnavailable(false);
+    } catch {
+      setFeeUnavailable(true);
       setDeliveryFee(null);
-      setNeighborhoodNotFound(deliveryZones.length > 0);
+    } finally {
+      setCalculatingFee(false);
     }
-  };
+  }, [restaurantAddress, zone1Fee, zone2Fee, zone3Fee]);
 
   const buscarCep = async (cep: string) => {
     const cepLimpo = cep.replace(/\D/g, "");
@@ -133,11 +137,14 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
       const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
       const data = await response.json();
       if (data.erro) { toast({ title: "CEP não encontrado", variant: "destructive" }); return; }
-      setAddress((prev) => ({ ...prev, rua: data.logradouro || "", cidade: data.localidade || "", estado: data.uf || "" }));
-      if (data.bairro) {
-        handleBairroChange(data.bairro);
-        setAddress((prev) => ({ ...prev, bairro: data.bairro }));
-      }
+      const rua = data.logradouro || "";
+      const bairro = data.bairro || "";
+      const cidade = data.localidade || "";
+      const estado = data.uf || "";
+      setAddress((prev) => ({ ...prev, rua, bairro, cidade, estado }));
+      // Auto-calculate fee using geocoding
+      const fullAddr = `${rua}, ${bairro}, ${cidade}, ${estado}, Brasil`;
+      calculateDeliveryFee(fullAddr);
     } catch { toast({ title: "Erro ao buscar CEP", variant: "destructive" }); }
     finally { setLoadingCep(false); }
   };
@@ -208,7 +215,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     setShowPix(false); setCupom(""); setObservations({});
     setAddress({ cep: "", rua: "", numero: "", bairro: "", complemento: "", referencia: "", cidade: "", estado: "" });
     setStep("cart");
-    setDeliveryType(null); setDeliveryFee(null);
+    setDeliveryType(null); setDeliveryFee(null); setFeeUnavailable(false);
     onOpenChange(false);
   };
 
@@ -234,7 +241,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     setShowPix(false); setCupom(""); setObservations({});
     setAddress({ cep: "", rua: "", numero: "", bairro: "", complemento: "", referencia: "", cidade: "", estado: "" });
     setStep("cart");
-    setDeliveryType(null); setDeliveryFee(null);
+    setDeliveryType(null); setDeliveryFee(null); setFeeUnavailable(false);
     onOpenChange(false);
   };
 
@@ -408,8 +415,15 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                   </button>
                   <div className="border-t pt-3 space-y-1">
                     <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span>{formatPrice(total)}</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Taxa de entrega</span><span className="text-muted-foreground text-xs">🛵 Taxa a combinar</span></div>
-                    <div className="flex justify-between font-bold text-base pt-1 border-t"><span>Total</span><span>{formatPrice(total)}</span></div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Taxa de entrega</span>
+                      {deliveryFee !== null ? (
+                        <span className="font-semibold text-primary text-sm">{deliveryFee === 0 ? "Grátis" : formatPrice(deliveryFee)}</span>
+                      ) : (
+                        <span className="text-muted-foreground text-xs">🛵 Taxa a combinar</span>
+                      )}
+                    </div>
+                    <div className="flex justify-between font-bold text-base pt-1 border-t"><span>Total</span><span>{formatPrice(orderTotal)}</span></div>
                   </div>
                   {!showCupom ? (
                     <button onClick={() => setShowCupom(true)} className="w-full flex items-center gap-3 p-3 border rounded-xl text-sm">
@@ -458,13 +472,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                     <Input placeholder="Rua *" value={address.rua} onChange={(e) => setAddress({ ...address, rua: e.target.value })} className="flex-1" />
                     <Input placeholder="Nº *" value={address.numero} onChange={(e) => setAddress({ ...address, numero: e.target.value })} className="w-20" />
                   </div>
-                  <Input placeholder="Bairro *" value={address.bairro} onChange={(e) => handleBairroChange(e.target.value)} onBlur={() => handleBairroChange(address.bairro)} />
-                  {neighborhoodNotFound && address.bairro.trim() && (
-                    <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                      <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                      <p className="text-xs text-amber-700 dark:text-amber-400">Taxa de entrega a combinar. Entre em contato pelo WhatsApp.</p>
-                    </div>
-                  )}
+                  <Input placeholder="Bairro *" value={address.bairro} onChange={(e) => setAddress({ ...address, bairro: e.target.value })} />
                   <Input placeholder="Complemento" value={address.complemento} onChange={(e) => setAddress({ ...address, complemento: e.target.value })} />
                   <Input placeholder="Ponto de referência" value={address.referencia} onChange={(e) => setAddress({ ...address, referencia: e.target.value })} />
                   <div className="flex gap-2">
@@ -473,7 +481,15 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                   </div>
                   <div className="flex justify-between text-sm pt-1">
                     <span className="text-muted-foreground">Taxa de entrega</span>
-                    <span className="text-muted-foreground text-xs">🛵 Taxa a combinar</span>
+                    {calculatingFee ? (
+                      <span className="flex items-center gap-1 text-muted-foreground text-xs"><Loader2 className="w-3 h-3 animate-spin" /> Calculando...</span>
+                    ) : deliveryFee !== null ? (
+                      <span className="font-semibold text-primary text-sm">{deliveryFee === 0 ? "Grátis" : formatPrice(deliveryFee)}</span>
+                    ) : feeUnavailable ? (
+                      <span className="text-muted-foreground text-xs">🛵 Taxa a combinar</span>
+                    ) : (
+                      <span className="text-muted-foreground text-xs">🛵 Taxa a combinar</span>
+                    )}
                   </div>
                 </div>
               )}
