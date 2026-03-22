@@ -296,6 +296,11 @@ export default function Admin() {
             <BusinessHoursEditor />
           </TabsContent>
 
+          {/* DELIVERY ZONES TAB */}
+          <TabsContent value="delivery">
+            <DeliveryZonesEditor />
+          </TabsContent>
+
           {/* SETTINGS TAB */}
           <TabsContent value="settings">
             <Card>
