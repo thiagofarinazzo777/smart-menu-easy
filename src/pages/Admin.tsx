@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, Plus, Pencil, Trash2, Flame, Clock } from "lucide-react";
+import { LogOut, Plus, Pencil, Trash2, Flame, Clock, MapPin } from "lucide-react";
 import { BusinessHoursEditor } from "@/components/admin/BusinessHoursEditor";
 import { DeliveryZonesEditor } from "@/components/admin/DeliveryZonesEditor";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
