@@ -164,6 +164,8 @@ export default function Admin() {
     zone1_fee: "5",
     zone2_fee: "8",
     zone3_fee: "12",
+    delivery_time: "40-70 min",
+    min_order: "30",
   });
   const [configLoaded, setConfigLoaded] = useState(false);
 
