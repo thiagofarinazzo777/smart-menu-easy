@@ -158,6 +158,9 @@ export default function Admin() {
     description: "",
     whatsapp_number: "",
     logo_url: "",
+    zone1_fee: "5",
+    zone2_fee: "8",
+    zone3_fee: "12",
   });
   const [configLoaded, setConfigLoaded] = useState(false);
 
