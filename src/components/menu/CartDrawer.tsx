@@ -122,7 +122,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
       setNeighborhoodNotFound(false);
     } else {
       setDeliveryFee(null);
-      setNeighborhoodNotFound(true);
+      setNeighborhoodNotFound(deliveryZones.length > 0);
     }
   };
 
