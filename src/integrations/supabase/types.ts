@@ -156,12 +156,15 @@ export type Database = {
       }
       restaurant_config: {
         Row: {
+          city: string
           created_at: string
           description: string | null
           id: string
           logo_url: string | null
           name: string
           pix_key: string | null
+          rating: number
+          rating_count: string
           updated_at: string
           whatsapp_number: string | null
           zone1_fee: number
@@ -169,12 +172,15 @@ export type Database = {
           zone3_fee: number
         }
         Insert: {
+          city?: string
           created_at?: string
           description?: string | null
           id?: string
           logo_url?: string | null
           name?: string
           pix_key?: string | null
+          rating?: number
+          rating_count?: string
           updated_at?: string
           whatsapp_number?: string | null
           zone1_fee?: number
@@ -182,12 +188,15 @@ export type Database = {
           zone3_fee?: number
         }
         Update: {
+          city?: string
           created_at?: string
           description?: string | null
           id?: string
           logo_url?: string | null
           name?: string
           pix_key?: string | null
+          rating?: number
+          rating_count?: string
           updated_at?: string
           whatsapp_number?: string | null
           zone1_fee?: number

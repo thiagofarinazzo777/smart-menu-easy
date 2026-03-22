@@ -16,6 +16,7 @@ import { User, LogOut, AlertTriangle } from "lucide-react";
 
 const Index = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>("inicio");
   const [authOpen, setAuthOpen] = useState(false);
@@ -50,9 +51,16 @@ const Index = () => {
     },
   });
 
-  const filteredItems = activeCategory
-    ? menuItems.filter((i) => i.category_id === activeCategory)
+  const searchFiltered = searchQuery.trim()
+    ? menuItems.filter((i) =>
+        i.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (i.description && i.description.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
     : menuItems;
+
+  const filteredItems = activeCategory
+    ? searchFiltered.filter((i) => i.category_id === activeCategory)
+    : searchFiltered;
 
   const groupedItems = activeCategory
     ? [{ category: categories.find((c) => c.id === activeCategory), items: filteredItems }]
@@ -72,7 +80,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background pb-16">
-      <MenuHeader config={config ?? null} isOpen={restaurantIsOpen} nextOpenInfo={nextOpenInfo} />
+      <MenuHeader config={config ?? null} isOpen={restaurantIsOpen} nextOpenInfo={nextOpenInfo} searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
       {/* User bar */}
       <div className="max-w-md mx-auto px-4 py-2 flex items-center justify-end gap-2">

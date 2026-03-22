@@ -158,6 +158,9 @@ export default function Admin() {
     description: "",
     whatsapp_number: "",
     logo_url: "",
+    city: "Marília - SP",
+    rating: "4.8",
+    rating_count: "100+",
     zone1_fee: "5",
     zone2_fee: "8",
     zone3_fee: "12",
@@ -171,6 +174,9 @@ export default function Admin() {
         description: config.description ?? "",
         whatsapp_number: config.whatsapp_number ?? "",
         logo_url: config.logo_url ?? "",
+        city: (config as any).city ?? "Marília - SP",
+        rating: String((config as any).rating ?? 4.8),
+        rating_count: (config as any).rating_count ?? "100+",
         zone1_fee: String(config.zone1_fee ?? 5),
         zone2_fee: String(config.zone2_fee ?? 8),
         zone3_fee: String(config.zone3_fee ?? 12),
@@ -182,13 +188,14 @@ export default function Admin() {
   const saveConfig = useMutation({
     mutationFn: async () => {
       if (config) {
-        const { zone1_fee, zone2_fee, zone3_fee, ...rest } = configForm;
+        const { zone1_fee, zone2_fee, zone3_fee, rating, ...rest } = configForm;
         await supabase.from("restaurant_config").update({
           ...rest,
+          rating: parseFloat(rating) || 0,
           zone1_fee: parseFloat(zone1_fee) || 0,
           zone2_fee: parseFloat(zone2_fee) || 0,
           zone3_fee: parseFloat(zone3_fee) || 0,
-        }).eq("id", config.id);
+        } as any).eq("id", config.id);
       }
     },
     onSuccess: () => {
@@ -348,6 +355,39 @@ export default function Admin() {
                     value={configForm.logo_url}
                     onChange={(e) => setConfigForm((p) => ({ ...p, logo_url: e.target.value }))}
                   />
+                </div>
+
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-primary" /> Localidade e Avaliação
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium">Cidade (ex: Marília - SP)</label>
+                      <Input
+                        value={configForm.city}
+                        onChange={(e) => setConfigForm((p) => ({ ...p, city: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">Nota (ex: 4.8)</label>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="5"
+                        value={configForm.rating}
+                        onChange={(e) => setConfigForm((p) => ({ ...p, rating: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">Quantidade de avaliações (ex: 100+)</label>
+                      <Input
+                        value={configForm.rating_count}
+                        onChange={(e) => setConfigForm((p) => ({ ...p, rating_count: e.target.value }))}
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="border-t pt-4 mt-4">
