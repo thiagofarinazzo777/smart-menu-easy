@@ -48,7 +48,6 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
   const [observations, setObservations] = useState<Record<string, string>>({});
   const [deliveryFee, setDeliveryFee] = useState<number | null>(null);
   const [neighborhoodNotFound, setNeighborhoodNotFound] = useState(false);
-  const [selectedZone, setSelectedZone] = useState<number | null>(null);
   const [address, setAddress] = useState({
     cep: "", rua: "", numero: "", bairro: "",
     complemento: "", referencia: "", cidade: "", estado: "",
@@ -66,26 +65,6 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
       return data ?? [];
     },
   });
-
-  const { data: restaurantConfig } = useQuery({
-    queryKey: ["restaurant-config-checkout"],
-    queryFn: async () => {
-      const { data } = await supabase.from("restaurant_config").select("zone1_fee, zone2_fee, zone3_fee").limit(1).single();
-      return data;
-    },
-  });
-
-  const zoneOptions = [
-    { label: "Zona 1 — até 3 km", fee: Number(restaurantConfig?.zone1_fee ?? 5) },
-    { label: "Zona 2 — 3 a 6 km", fee: Number(restaurantConfig?.zone2_fee ?? 8) },
-    { label: "Zona 3 — acima de 6 km", fee: Number(restaurantConfig?.zone3_fee ?? 12) },
-  ];
-
-  const handleZoneSelect = (zoneIndex: number) => {
-    setSelectedZone(zoneIndex);
-    setDeliveryFee(zoneOptions[zoneIndex].fee);
-    setNeighborhoodNotFound(false);
-  };
 
   const orderTotal = total + (deliveryType === "entrega" && deliveryFee !== null ? deliveryFee : 0);
 
@@ -142,7 +121,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
       setNeighborhoodNotFound(false);
     } else {
       setDeliveryFee(null);
-      setNeighborhoodNotFound(true);
+      setNeighborhoodNotFound(deliveryZones.length > 0);
     }
   };
 
@@ -197,9 +176,6 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.bairro)) {
       toast({ title: "Preencha o endereço completo", variant: "destructive" }); return;
     }
-    if (deliveryType === "entrega" && selectedZone === null) {
-      toast({ title: "Selecione a zona de entrega", variant: "destructive" }); return;
-    }
     setStep("confirmation");
   };
 
@@ -219,7 +195,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
       ? `${address.rua}, ${address.numero} - ${address.bairro}, ${address.cidade} - ${address.estado}${address.complemento ? ` (${address.complemento})` : ""}${address.referencia ? `\nReferência: ${address.referencia}` : ""}`
       : "Retirada no estabelecimento";
 
-    const feeText = deliveryType === "entrega" && deliveryFee !== null && deliveryFee > 0 ? formatPrice(deliveryFee) : "Grátis";
+    const feeText = deliveryType === "entrega" ? (deliveryFee !== null && deliveryFee > 0 ? formatPrice(deliveryFee) : deliveryFee === 0 ? "Grátis" : "A combinar") : "N/A";
     const pagamentoInfo = paymentType === "pix" ? "PIX" : paymentType === "dinheiro" ? `Dinheiro${troco ? ` (Troco para R$ ${troco})` : ""}` : paymentType === "credito" ? "Cartão de crédito" : "Cartão de débito";
 
     const message = `🛒 *Novo Pedido!*\n\n*Cliente:* ${customerName}\n*Telefone:* ${customerPhone}\n\n*Itens:*\n${itemLines}\n\n*Subtotal:* ${formatPrice(total)}\n*Entrega:* ${feeText}\n*Total:* ${formatPrice(orderTotal)}${cupom ? `\n*Cupom:* ${cupom}` : ""}\n\n*Entrega:* ${enderecoInfo}\n*Pagamento:* ${pagamentoInfo}`;
@@ -232,7 +208,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     setShowPix(false); setCupom(""); setObservations({});
     setAddress({ cep: "", rua: "", numero: "", bairro: "", complemento: "", referencia: "", cidade: "", estado: "" });
     setStep("cart");
-    setDeliveryType(null); setSelectedZone(null); setDeliveryFee(null);
+    setDeliveryType(null); setDeliveryFee(null);
     onOpenChange(false);
   };
 
@@ -258,7 +234,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     setShowPix(false); setCupom(""); setObservations({});
     setAddress({ cep: "", rua: "", numero: "", bairro: "", complemento: "", referencia: "", cidade: "", estado: "" });
     setStep("cart");
-    setDeliveryType(null); setSelectedZone(null); setDeliveryFee(null);
+    setDeliveryType(null); setDeliveryFee(null);
     onOpenChange(false);
   };
 
@@ -484,9 +460,9 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                   </div>
                   <Input placeholder="Bairro *" value={address.bairro} onChange={(e) => handleBairroChange(e.target.value)} onBlur={() => handleBairroChange(address.bairro)} />
                   {neighborhoodNotFound && address.bairro.trim() && (
-                    <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
-                      <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0" />
-                      <p className="text-xs text-destructive">Entrega indisponível para este bairro.</p>
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                      <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                      <p className="text-xs text-amber-700 dark:text-amber-400">Taxa de entrega a combinar. Entre em contato pelo WhatsApp.</p>
                     </div>
                   )}
                   <Input placeholder="Complemento" value={address.complemento} onChange={(e) => setAddress({ ...address, complemento: e.target.value })} />
@@ -495,25 +471,14 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                     <Input placeholder="Cidade *" value={address.cidade} onChange={(e) => setAddress({ ...address, cidade: e.target.value })} className="flex-1" />
                     <Input placeholder="UF *" value={address.estado} onChange={(e) => setAddress({ ...address, estado: e.target.value })} className="w-20" />
                   </div>
-                  <div className="mt-3 space-y-2">
-                    <p className="text-sm font-semibold">Selecione sua zona de entrega</p>
-                    {zoneOptions.map((zone, i) => (
-                      <div
-                        key={i}
-                        onClick={() => handleZoneSelect(i)}
-                        className={`p-3 rounded-xl border-2 cursor-pointer flex items-center justify-between transition-colors ${selectedZone === i ? "border-primary bg-primary/5" : "border-border"}`}
-                      >
-                        <span className="text-sm">{zone.label}</span>
-                        <span className="text-sm font-bold">{zone.fee === 0 ? "Grátis" : formatPrice(zone.fee)}</span>
-                      </div>
-                    ))}
-                  </div>
                   <div className="flex justify-between text-sm pt-1">
                     <span className="text-muted-foreground">Taxa de entrega</span>
                     {deliveryFee !== null ? (
                       <span className={deliveryFee === 0 ? "text-green-600 font-semibold" : "font-semibold"}>{deliveryFee === 0 ? "Grátis" : formatPrice(deliveryFee)}</span>
+                    ) : neighborhoodNotFound ? (
+                      <span className="text-muted-foreground text-xs">Taxa a combinar</span>
                     ) : (
-                      <span className="text-muted-foreground text-xs">Selecione a zona</span>
+                      <span className="text-muted-foreground text-xs">Informe o bairro</span>
                     )}
                   </div>
                 </div>
