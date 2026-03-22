@@ -293,7 +293,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
             </div>
             <div className="bg-primary/10 rounded-xl p-3 text-center mb-2">
               <p className="text-xs text-muted-foreground mb-1">Total a pagar</p>
-              <p className="font-bold text-primary text-2xl">{formatPrice(total)}</p>
+              <p className="font-bold text-primary text-2xl">{formatPrice(orderTotal)}</p>
             </div>
             <p className="text-xs text-muted-foreground text-center mb-6">
               Após o pagamento, envie seu pedido pelo WhatsApp.
