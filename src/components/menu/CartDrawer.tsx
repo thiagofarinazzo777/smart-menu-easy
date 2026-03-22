@@ -474,25 +474,14 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                     <Input placeholder="Cidade *" value={address.cidade} onChange={(e) => setAddress({ ...address, cidade: e.target.value })} className="flex-1" />
                     <Input placeholder="UF *" value={address.estado} onChange={(e) => setAddress({ ...address, estado: e.target.value })} className="w-20" />
                   </div>
-                  <div className="mt-3 space-y-2">
-                    <p className="text-sm font-semibold">Selecione sua zona de entrega</p>
-                    {zoneOptions.map((zone, i) => (
-                      <div
-                        key={i}
-                        onClick={() => handleZoneSelect(i)}
-                        className={`p-3 rounded-xl border-2 cursor-pointer flex items-center justify-between transition-colors ${selectedZone === i ? "border-primary bg-primary/5" : "border-border"}`}
-                      >
-                        <span className="text-sm">{zone.label}</span>
-                        <span className="text-sm font-bold">{zone.fee === 0 ? "Grátis" : formatPrice(zone.fee)}</span>
-                      </div>
-                    ))}
-                  </div>
                   <div className="flex justify-between text-sm pt-1">
                     <span className="text-muted-foreground">Taxa de entrega</span>
                     {deliveryFee !== null ? (
                       <span className={deliveryFee === 0 ? "text-green-600 font-semibold" : "font-semibold"}>{deliveryFee === 0 ? "Grátis" : formatPrice(deliveryFee)}</span>
+                    ) : neighborhoodNotFound ? (
+                      <span className="text-muted-foreground text-xs">Taxa a combinar</span>
                     ) : (
-                      <span className="text-muted-foreground text-xs">Selecione a zona</span>
+                      <span className="text-muted-foreground text-xs">Informe o bairro</span>
                     )}
                   </div>
                 </div>
