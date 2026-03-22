@@ -51,9 +51,16 @@ const Index = () => {
     },
   });
 
-  const filteredItems = activeCategory
-    ? menuItems.filter((i) => i.category_id === activeCategory)
+  const searchFiltered = searchQuery.trim()
+    ? menuItems.filter((i) =>
+        i.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (i.description && i.description.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
     : menuItems;
+
+  const filteredItems = activeCategory
+    ? searchFiltered.filter((i) => i.category_id === activeCategory)
+    : searchFiltered;
 
   const groupedItems = activeCategory
     ? [{ category: categories.find((c) => c.id === activeCategory), items: filteredItems }]
