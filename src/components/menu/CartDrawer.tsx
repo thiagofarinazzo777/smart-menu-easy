@@ -199,6 +199,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
       : "Retirada no estabelecimento";
 
     const feeText = deliveryType === "entrega" && deliveryFee !== null && deliveryFee > 0 ? formatPrice(deliveryFee) : "Grátis";
+    const pagamentoInfo = paymentType === "pix" ? "PIX" : paymentType === "dinheiro" ? `Dinheiro${troco ? ` (Troco para R$ ${troco})` : ""}` : paymentType === "credito" ? "Cartão de crédito" : "Cartão de débito";
 
     const message = `🛒 *Novo Pedido!*\n\n*Cliente:* ${customerName}\n*Telefone:* ${customerPhone}\n\n*Itens:*\n${itemLines}\n\n*Subtotal:* ${formatPrice(total)}\n*Entrega:* ${feeText}\n*Total:* ${formatPrice(orderTotal)}${cupom ? `\n*Cupom:* ${cupom}` : ""}\n\n*Entrega:* ${enderecoInfo}\n*Pagamento:* ${pagamentoInfo}`;
 
