@@ -77,7 +77,7 @@ export function MenuHeader({ config }: MenuHeaderProps) {
               Aberto agora
             </span>
           ) : (
-            <span className="inline-flex items-center gap-2 bg-gray-200 text-gray-600 text-xs font-semibold px-3 py-1.5 rounded-full">
+            <span className="inline-flex items-center gap-2 bg-muted text-muted-foreground text-xs font-semibold px-3 py-1.5 rounded-full">
               <span className="h-2 w-2 rounded-full bg-red-400" />
               Fechado · Abre às 19:00
             </span>
@@ -85,19 +85,19 @@ export function MenuHeader({ config }: MenuHeaderProps) {
 
           {/* Delivery pills */}
           <div className="flex items-center gap-2">
-            <button className="inline-flex items-center gap-1.5 bg-white text-gray-700 text-xs font-medium px-4 py-2 rounded-full border border-gray-200 shadow-sm">
+            <button className="inline-flex items-center gap-1.5 bg-card text-foreground text-xs font-medium px-4 py-2 rounded-full border border-border shadow-sm">
               <Bike className="w-3.5 h-3.5" />
               Entrega
-              <ChevronDown className="w-3 h-3 text-gray-400" />
+              <ChevronDown className="w-3 h-3 text-muted-foreground" />
             </button>
-            <button className="inline-flex items-center gap-1.5 bg-white text-gray-700 text-xs font-medium px-4 py-2 rounded-full border border-gray-200 shadow-sm">
+            <button className="inline-flex items-center gap-1.5 bg-card text-foreground text-xs font-medium px-4 py-2 rounded-full border border-border shadow-sm">
               <Clock className="w-3.5 h-3.5" />
               Hoje · 40–70 min
             </button>
           </div>
 
           {/* Minimum order */}
-          <p className="text-[11px] text-gray-500 font-body">
+          <p className="text-[11px] text-muted-foreground font-body">
             💰 Pedido mínimo R$ 30,00
           </p>
         </div>
