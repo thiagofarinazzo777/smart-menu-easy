@@ -153,7 +153,7 @@ const Index = () => {
                   )}
                   <div className="space-y-3">
                     {group.items.map((item, i) => (
-                      <MenuItemCard key={item.id} item={item} index={gi * 10 + i} disabled={!restaurantIsOpen} />
+                      <MenuItemCard key={item.id} item={item} index={gi * 10 + i} />
                     ))}
                   </div>
                 </section>
