@@ -158,6 +158,9 @@ export default function Admin() {
     description: "",
     whatsapp_number: "",
     logo_url: "",
+    zone1_fee: "5",
+    zone2_fee: "8",
+    zone3_fee: "12",
   });
   const [configLoaded, setConfigLoaded] = useState(false);
 
@@ -168,6 +171,9 @@ export default function Admin() {
         description: config.description ?? "",
         whatsapp_number: config.whatsapp_number ?? "",
         logo_url: config.logo_url ?? "",
+        zone1_fee: String(config.zone1_fee ?? 5),
+        zone2_fee: String(config.zone2_fee ?? 8),
+        zone3_fee: String(config.zone3_fee ?? 12),
       });
       setConfigLoaded(true);
     }
@@ -176,7 +182,13 @@ export default function Admin() {
   const saveConfig = useMutation({
     mutationFn: async () => {
       if (config) {
-        await supabase.from("restaurant_config").update(configForm).eq("id", config.id);
+        const { zone1_fee, zone2_fee, zone3_fee, ...rest } = configForm;
+        await supabase.from("restaurant_config").update({
+          ...rest,
+          zone1_fee: parseFloat(zone1_fee) || 0,
+          zone2_fee: parseFloat(zone2_fee) || 0,
+          zone3_fee: parseFloat(zone3_fee) || 0,
+        }).eq("id", config.id);
       }
     },
     onSuccess: () => {
@@ -337,6 +349,28 @@ export default function Admin() {
                     onChange={(e) => setConfigForm((p) => ({ ...p, logo_url: e.target.value }))}
                   />
                 </div>
+
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-primary" /> Taxa de Entrega por Zona
+                  </h3>
+                  <p className="text-xs text-muted-foreground mb-3">Configure o valor da entrega para cada faixa de distância.</p>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium">Zona 1 — até 3 km (R$)</label>
+                      <Input type="number" step="0.50" min="0" value={configForm.zone1_fee} onChange={(e) => setConfigForm((p) => ({ ...p, zone1_fee: e.target.value }))} />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">Zona 2 — 3 a 6 km (R$)</label>
+                      <Input type="number" step="0.50" min="0" value={configForm.zone2_fee} onChange={(e) => setConfigForm((p) => ({ ...p, zone2_fee: e.target.value }))} />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">Zona 3 — acima de 6 km (R$)</label>
+                      <Input type="number" step="0.50" min="0" value={configForm.zone3_fee} onChange={(e) => setConfigForm((p) => ({ ...p, zone3_fee: e.target.value }))} />
+                    </div>
+                  </div>
+                </div>
+
                 <Button onClick={() => saveConfig.mutate()} className="w-full">
                   Salvar Configurações
                 </Button>
