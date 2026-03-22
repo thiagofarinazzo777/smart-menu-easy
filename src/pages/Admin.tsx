@@ -185,6 +185,7 @@ export default function Admin() {
         zone3_fee: String(config.zone3_fee ?? 12),
         delivery_time: (config as any).delivery_time ?? "40-70 min",
         min_order: String((config as any).min_order ?? 30),
+        restaurant_address: (config as any).restaurant_address ?? "",
       });
       setConfigLoaded(true);
     }
