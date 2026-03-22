@@ -6,9 +6,10 @@ import { useCart } from "@/hooks/useCart";
 interface MenuItemCardProps {
   item: Tables<"menu_items">;
   index: number;
+  disabled?: boolean;
 }
 
-export function MenuItemCard({ item, index }: MenuItemCardProps) {
+export function MenuItemCard({ item, index, disabled }: MenuItemCardProps) {
   const { addItem } = useCart();
 
   const formatPrice = (price: number) =>
