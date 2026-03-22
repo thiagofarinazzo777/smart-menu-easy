@@ -164,6 +164,8 @@ export default function Admin() {
     zone1_fee: "5",
     zone2_fee: "8",
     zone3_fee: "12",
+    delivery_time: "40-70 min",
+    min_order: "30",
   });
   const [configLoaded, setConfigLoaded] = useState(false);
 
@@ -180,6 +182,8 @@ export default function Admin() {
         zone1_fee: String(config.zone1_fee ?? 5),
         zone2_fee: String(config.zone2_fee ?? 8),
         zone3_fee: String(config.zone3_fee ?? 12),
+        delivery_time: (config as any).delivery_time ?? "40-70 min",
+        min_order: String((config as any).min_order ?? 30),
       });
       setConfigLoaded(true);
     }
@@ -188,13 +192,14 @@ export default function Admin() {
   const saveConfig = useMutation({
     mutationFn: async () => {
       if (config) {
-        const { zone1_fee, zone2_fee, zone3_fee, rating, ...rest } = configForm;
+        const { zone1_fee, zone2_fee, zone3_fee, rating, min_order, ...rest } = configForm;
         await supabase.from("restaurant_config").update({
           ...rest,
           rating: parseFloat(rating) || 0,
           zone1_fee: parseFloat(zone1_fee) || 0,
           zone2_fee: parseFloat(zone2_fee) || 0,
           zone3_fee: parseFloat(zone3_fee) || 0,
+          min_order: parseFloat(min_order) || 0,
         } as any).eq("id", config.id);
       }
     },
@@ -385,6 +390,31 @@ export default function Admin() {
                       <Input
                         value={configForm.rating_count}
                         onChange={(e) => setConfigForm((p) => ({ ...p, rating_count: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-primary" /> Entrega e Pedido Mínimo
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium">Tempo estimado de entrega (ex: 40-70 min)</label>
+                      <Input
+                        value={configForm.delivery_time}
+                        onChange={(e) => setConfigForm((p) => ({ ...p, delivery_time: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">Pedido mínimo (R$)</label>
+                      <Input
+                        type="number"
+                        step="1"
+                        min="0"
+                        value={configForm.min_order}
+                        onChange={(e) => setConfigForm((p) => ({ ...p, min_order: e.target.value }))}
                       />
                     </div>
                   </div>

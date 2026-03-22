@@ -17,6 +17,8 @@ export function MenuHeader({ config, isOpen, nextOpenInfo, searchQuery, onSearch
   const city = config?.city || "Marília - SP";
   const rating = config?.rating ?? 4.8;
   const ratingCount = config?.rating_count || "100+";
+  const deliveryTime = (config as any)?.delivery_time || "40-70 min";
+  const minOrder = (config as any)?.min_order ?? 30;
 
   return (
     <>
@@ -91,10 +93,10 @@ export function MenuHeader({ config, isOpen, nextOpenInfo, searchQuery, onSearch
             </button>
             <button className="inline-flex items-center justify-center gap-1.5 bg-secondary text-secondary-foreground text-xs font-medium px-4 py-2 rounded-xl border border-border shadow-sm">
               <Clock className="w-3.5 h-3.5 text-primary" />
-              Hoje · 40–70 min
+              Hoje · {deliveryTime}
             </button>
           </div>
-          <p className="text-[11px] text-muted-foreground">💰 Pedido mínimo R$ 30,00</p>
+          <p className="text-[11px] text-muted-foreground">💰 Pedido mínimo R$ {Number(minOrder).toFixed(2).replace('.', ',')}</p>
         </div>
       </div>
 

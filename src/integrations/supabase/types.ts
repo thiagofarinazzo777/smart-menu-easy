@@ -158,9 +158,11 @@ export type Database = {
         Row: {
           city: string
           created_at: string
+          delivery_time: string
           description: string | null
           id: string
           logo_url: string | null
+          min_order: number
           name: string
           pix_key: string | null
           rating: number
@@ -174,9 +176,11 @@ export type Database = {
         Insert: {
           city?: string
           created_at?: string
+          delivery_time?: string
           description?: string | null
           id?: string
           logo_url?: string | null
+          min_order?: number
           name?: string
           pix_key?: string | null
           rating?: number
@@ -190,9 +194,11 @@ export type Database = {
         Update: {
           city?: string
           created_at?: string
+          delivery_time?: string
           description?: string | null
           id?: string
           logo_url?: string | null
+          min_order?: number
           name?: string
           pix_key?: string | null
           rating?: number
