@@ -316,7 +316,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
 
         {/* Edit Item Screen */}
         {editingItem && (
-          <div className="absolute inset-0 z-50 bg-white flex flex-col p-6">
+          <div className="absolute inset-0 z-50 bg-background flex flex-col p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold">Editar item</h2>
               <button onClick={() => setEditingItem(null)}><X className="w-5 h-5" /></button>
