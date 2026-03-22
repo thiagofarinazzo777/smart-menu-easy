@@ -460,7 +460,13 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                     <Input placeholder="Rua *" value={address.rua} onChange={(e) => setAddress({ ...address, rua: e.target.value })} className="flex-1" />
                     <Input placeholder="Nº *" value={address.numero} onChange={(e) => setAddress({ ...address, numero: e.target.value })} className="w-20" />
                   </div>
-                  <Input placeholder="Bairro *" value={address.bairro} onChange={(e) => setAddress({ ...address, bairro: e.target.value })} />
+                  <Input placeholder="Bairro *" value={address.bairro} onChange={(e) => handleBairroChange(e.target.value)} onBlur={() => handleBairroChange(address.bairro)} />
+                  {neighborhoodNotFound && address.bairro.trim() && (
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                      <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0" />
+                      <p className="text-xs text-destructive">Entrega indisponível para este bairro.</p>
+                    </div>
+                  )}
                   <Input placeholder="Complemento" value={address.complemento} onChange={(e) => setAddress({ ...address, complemento: e.target.value })} />
                   <Input placeholder="Ponto de referência" value={address.referencia} onChange={(e) => setAddress({ ...address, referencia: e.target.value })} />
                   <div className="flex gap-2">
@@ -469,7 +475,11 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                   </div>
                   <div className="flex justify-between text-sm pt-1">
                     <span className="text-muted-foreground">Taxa de entrega</span>
-                    <span className="text-green-600 font-semibold">Grátis</span>
+                    {deliveryFee !== null ? (
+                      <span className={deliveryFee === 0 ? "text-green-600 font-semibold" : "font-semibold"}>{deliveryFee === 0 ? "Grátis" : formatPrice(deliveryFee)}</span>
+                    ) : (
+                      <span className="text-muted-foreground text-xs">Informe o bairro</span>
+                    )}
                   </div>
                 </div>
               )}
