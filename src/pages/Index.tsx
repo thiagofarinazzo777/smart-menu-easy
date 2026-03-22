@@ -72,7 +72,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background pb-16">
-      <MenuHeader config={config ?? null} />
+      <MenuHeader config={config ?? null} isOpen={restaurantIsOpen} nextOpenInfo={nextOpenInfo} />
 
       {/* User bar */}
       <div className="max-w-md mx-auto px-4 py-2 flex items-center justify-end gap-2">
