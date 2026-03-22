@@ -473,13 +473,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                   </div>
                   <div className="flex justify-between text-sm pt-1">
                     <span className="text-muted-foreground">Taxa de entrega</span>
-                    {deliveryFee !== null ? (
-                      <span className={deliveryFee === 0 ? "text-green-600 font-semibold" : "font-semibold"}>{deliveryFee === 0 ? "Grátis" : formatPrice(deliveryFee)}</span>
-                    ) : neighborhoodNotFound ? (
-                      <span className="text-muted-foreground text-xs">Taxa a combinar</span>
-                    ) : (
-                      <span className="text-muted-foreground text-xs">Informe o bairro</span>
-                    )}
+                    <span className="text-muted-foreground text-xs">🛵 Taxa a combinar</span>
                   </div>
                 </div>
               )}
