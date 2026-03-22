@@ -399,13 +399,19 @@ export default function Admin() {
 
                 <div className="border-t pt-4 mt-4">
                   <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-primary" /> Endereço do Restaurante
+                    <MapPin className="w-4 h-4 text-primary" /> CEP do Restaurante
                   </h3>
                   <p className="text-xs text-muted-foreground mb-2">Usado para calcular a taxa de entrega por distância.</p>
                   <Input
-                    placeholder="Ex: Rua das Flores 123, Centro, Marília, SP"
+                    placeholder="Ex: 17501-050"
                     value={configForm.restaurant_address}
-                    onChange={(e) => setConfigForm((p) => ({ ...p, restaurant_address: e.target.value }))}
+                    onChange={(e) => {
+                      const v = e.target.value.replace(/\D/g, "").slice(0, 8);
+                      const formatted = v.length > 5 ? `${v.slice(0, 5)}-${v.slice(5)}` : v;
+                      setConfigForm((p) => ({ ...p, restaurant_address: formatted }));
+                    }}
+                    inputMode="numeric"
+                    maxLength={9}
                   />
                 </div>
 
