@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsRestaurantOpen } from "@/hooks/useBusinessHours";
 import { MenuHeader } from "@/components/menu/MenuHeader";
 import { CategoryBar } from "@/components/menu/CategoryBar";
 import { MenuItemCard } from "@/components/menu/MenuItemCard";
@@ -11,7 +12,7 @@ import { BottomNav, TabId } from "@/components/menu/BottomNav";
 import { CustomerAuthModal } from "@/components/menu/CustomerAuthModal";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Skeleton } from "@/components/ui/skeleton";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, AlertTriangle } from "lucide-react";
 
 const Index = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
