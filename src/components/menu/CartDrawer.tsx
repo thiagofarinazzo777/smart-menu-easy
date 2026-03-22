@@ -575,8 +575,8 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
               </div>
               <div className="border-t pt-3 space-y-1">
                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span>{formatPrice(total)}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Entrega</span><span className="text-green-600">Grátis</span></div>
-                <div className="flex justify-between font-bold"><span>Total</span><span className="text-primary">{formatPrice(total)}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Entrega</span><span className={deliveryType === "entrega" && deliveryFee && deliveryFee > 0 ? "font-semibold" : "text-green-600"}>{deliveryType === "retirada" || !deliveryFee || deliveryFee === 0 ? "Grátis" : formatPrice(deliveryFee)}</span></div>
+                <div className="flex justify-between font-bold"><span>Total</span><span className="text-primary">{formatPrice(orderTotal)}</span></div>
               </div>
             </div>
           )}
