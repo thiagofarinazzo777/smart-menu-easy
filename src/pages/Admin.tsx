@@ -289,6 +289,11 @@ export default function Admin() {
             ))}
           </TabsContent>
 
+          {/* HOURS TAB */}
+          <TabsContent value="hours">
+            <BusinessHoursEditor />
+          </TabsContent>
+
           {/* SETTINGS TAB */}
           <TabsContent value="settings">
             <Card>
