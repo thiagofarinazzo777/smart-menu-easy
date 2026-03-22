@@ -192,13 +192,14 @@ export default function Admin() {
   const saveConfig = useMutation({
     mutationFn: async () => {
       if (config) {
-        const { zone1_fee, zone2_fee, zone3_fee, rating, ...rest } = configForm;
+        const { zone1_fee, zone2_fee, zone3_fee, rating, min_order, ...rest } = configForm;
         await supabase.from("restaurant_config").update({
           ...rest,
           rating: parseFloat(rating) || 0,
           zone1_fee: parseFloat(zone1_fee) || 0,
           zone2_fee: parseFloat(zone2_fee) || 0,
           zone3_fee: parseFloat(zone3_fee) || 0,
+          min_order: parseFloat(min_order) || 0,
         } as any).eq("id", config.id);
       }
     },
