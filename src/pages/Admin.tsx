@@ -349,6 +349,28 @@ export default function Admin() {
                     onChange={(e) => setConfigForm((p) => ({ ...p, logo_url: e.target.value }))}
                   />
                 </div>
+
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-primary" /> Taxa de Entrega por Zona
+                  </h3>
+                  <p className="text-xs text-muted-foreground mb-3">Configure o valor da entrega para cada faixa de distância.</p>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium">Zona 1 — até 3 km (R$)</label>
+                      <Input type="number" step="0.50" min="0" value={configForm.zone1_fee} onChange={(e) => setConfigForm((p) => ({ ...p, zone1_fee: e.target.value }))} />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">Zona 2 — 3 a 6 km (R$)</label>
+                      <Input type="number" step="0.50" min="0" value={configForm.zone2_fee} onChange={(e) => setConfigForm((p) => ({ ...p, zone2_fee: e.target.value }))} />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">Zona 3 — acima de 6 km (R$)</label>
+                      <Input type="number" step="0.50" min="0" value={configForm.zone3_fee} onChange={(e) => setConfigForm((p) => ({ ...p, zone3_fee: e.target.value }))} />
+                    </div>
+                  </div>
+                </div>
+
                 <Button onClick={() => saveConfig.mutate()} className="w-full">
                   Salvar Configurações
                 </Button>
