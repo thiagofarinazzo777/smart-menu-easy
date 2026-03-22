@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/hooks/useCart";
-import { Minus, Plus, ShoppingBag, MapPin, Loader2, Check, Bike, PersonStanding, CreditCard, Banknote, QrCode, Pencil, Tag, X, Copy, Share2, Clock, MessageCircle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Minus, Plus, ShoppingBag, MapPin, Loader2, Check, Bike, PersonStanding, CreditCard, Banknote, QrCode, Pencil, Tag, X, Copy, Share2, Clock, MessageCircle, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { formatBrazilianPhone, isValidBrazilianPhone } from "@/lib/phone-mask";
@@ -44,22 +46,38 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
   const [customerPhone, setCustomerPhone] = useState("");
   const [editingItem, setEditingItem] = useState<ItemEdit | null>(null);
   const [observations, setObservations] = useState<Record<string, string>>({});
+  const [deliveryFee, setDeliveryFee] = useState<number | null>(null);
+  const [neighborhoodNotFound, setNeighborhoodNotFound] = useState(false);
   const [address, setAddress] = useState({
     cep: "", rua: "", numero: "", bairro: "",
     complemento: "", referencia: "", cidade: "", estado: "",
   });
   const { toast } = useToast();
 
+  const { data: deliveryZones = [] } = useQuery({
+    queryKey: ["delivery-zones"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("delivery_zones")
+        .select("*")
+        .eq("is_active", true)
+        .order("neighborhood");
+      return data ?? [];
+    },
+  });
+
+  const orderTotal = total + (deliveryType === "entrega" && deliveryFee !== null ? deliveryFee : 0);
+
   const pixPayloadCode = useMemo(() => {
-    if (!pixKey || total <= 0) return pixKey || "";
+    if (!pixKey || orderTotal <= 0) return pixKey || "";
     return generatePixPayload({
       pixKey,
       merchantName: restaurantName,
       merchantCity: restaurantCity,
-      amount: total,
+      amount: orderTotal,
       txId: crypto.randomUUID().replace(/-/g, "").substring(0, 25),
     });
-  }, [pixKey, total, restaurantName, restaurantCity]);
+  }, [pixKey, orderTotal, restaurantName, restaurantCity]);
 
   const formatPrice = (price: number) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(price);
@@ -87,6 +105,26 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     }
   };
 
+  const handleBairroChange = (value: string) => {
+    setAddress((prev) => ({ ...prev, bairro: value }));
+    if (!value.trim()) {
+      setDeliveryFee(null);
+      setNeighborhoodNotFound(false);
+      return;
+    }
+    const normalized = value.trim().toLowerCase();
+    const zone = deliveryZones.find(
+      (z: any) => z.neighborhood.toLowerCase() === normalized
+    );
+    if (zone) {
+      setDeliveryFee(Number(zone.fee));
+      setNeighborhoodNotFound(false);
+    } else {
+      setDeliveryFee(null);
+      setNeighborhoodNotFound(true);
+    }
+  };
+
   const buscarCep = async (cep: string) => {
     const cepLimpo = cep.replace(/\D/g, "");
     if (cepLimpo.length !== 8) return;
@@ -95,7 +133,11 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
       const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
       const data = await response.json();
       if (data.erro) { toast({ title: "CEP não encontrado", variant: "destructive" }); return; }
-      setAddress((prev) => ({ ...prev, rua: data.logradouro || "", bairro: data.bairro || "", cidade: data.localidade || "", estado: data.uf || "" }));
+      setAddress((prev) => ({ ...prev, rua: data.logradouro || "", cidade: data.localidade || "", estado: data.uf || "" }));
+      if (data.bairro) {
+        handleBairroChange(data.bairro);
+        setAddress((prev) => ({ ...prev, bairro: data.bairro }));
+      }
     } catch { toast({ title: "Erro ao buscar CEP", variant: "destructive" }); }
     finally { setLoadingCep(false); }
   };
@@ -134,6 +176,9 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.bairro)) {
       toast({ title: "Preencha o endereço completo", variant: "destructive" }); return;
     }
+    if (deliveryType === "entrega" && neighborhoodNotFound) {
+      toast({ title: "Entrega indisponível", description: "Não entregamos nesse bairro.", variant: "destructive" }); return;
+    }
     setStep("confirmation");
   };
 
@@ -153,9 +198,10 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
       ? `${address.rua}, ${address.numero} - ${address.bairro}, ${address.cidade} - ${address.estado}${address.complemento ? ` (${address.complemento})` : ""}${address.referencia ? `\nReferência: ${address.referencia}` : ""}`
       : "Retirada no estabelecimento";
 
+    const feeText = deliveryType === "entrega" && deliveryFee !== null && deliveryFee > 0 ? formatPrice(deliveryFee) : "Grátis";
     const pagamentoInfo = paymentType === "pix" ? "PIX" : paymentType === "dinheiro" ? `Dinheiro${troco ? ` (Troco para R$ ${troco})` : ""}` : paymentType === "credito" ? "Cartão de crédito" : "Cartão de débito";
 
-    const message = `🛒 *Novo Pedido!*\n\n*Cliente:* ${customerName}\n*Telefone:* ${customerPhone}\n\n*Itens:*\n${itemLines}\n\n*Subtotal:* ${formatPrice(total)}\n*Entrega:* Grátis\n*Total:* ${formatPrice(total)}${cupom ? `\n*Cupom:* ${cupom}` : ""}\n\n*Entrega:* ${enderecoInfo}\n*Pagamento:* ${pagamentoInfo}`;
+    const message = `🛒 *Novo Pedido!*\n\n*Cliente:* ${customerName}\n*Telefone:* ${customerPhone}\n\n*Itens:*\n${itemLines}\n\n*Subtotal:* ${formatPrice(total)}\n*Entrega:* ${feeText}\n*Total:* ${formatPrice(orderTotal)}${cupom ? `\n*Cupom:* ${cupom}` : ""}\n\n*Entrega:* ${enderecoInfo}\n*Pagamento:* ${pagamentoInfo}`;
 
     const phone = whatsappNumber.replace(/\D/g, "");
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
@@ -181,7 +227,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
 
     const entregaTipo = deliveryType === "entrega" ? "Entrega" : "Retirada";
 
-    const message = `Olá! Acabei de realizar o pagamento via Pix. Seguem os detalhes do meu pedido:\n\n👤 Nome: ${customerName}\n📦 Itens:\n${itemLines}\n\n💰 Total: ${formatPrice(total)}\n🛵 Entrega: ${entregaTipo}\n${deliveryType === "entrega" ? `📍 Endereço: ${enderecoInfo}\n` : ""}\n✅ Pagamento: Pix realizado`;
+    const message = `Olá! Acabei de realizar o pagamento via Pix. Seguem os detalhes do meu pedido:\n\n👤 Nome: ${customerName}\n📦 Itens:\n${itemLines}\n\n💰 Total: ${formatPrice(orderTotal)}\n🛵 Entrega: ${entregaTipo}\n${deliveryType === "entrega" ? `📍 Endereço: ${enderecoInfo}\n` : ""}\n✅ Pagamento: Pix realizado`;
 
     const phone = whatsappNumber.replace(/\D/g, "");
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
@@ -247,7 +293,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
             </div>
             <div className="bg-primary/10 rounded-xl p-3 text-center mb-2">
               <p className="text-xs text-muted-foreground mb-1">Total a pagar</p>
-              <p className="font-bold text-primary text-2xl">{formatPrice(total)}</p>
+              <p className="font-bold text-primary text-2xl">{formatPrice(orderTotal)}</p>
             </div>
             <p className="text-xs text-muted-foreground text-center mb-6">
               Após o pagamento, envie seu pedido pelo WhatsApp.
@@ -365,7 +411,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                   </button>
                   <div className="border-t pt-3 space-y-1">
                     <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span>{formatPrice(total)}</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Taxa de entrega</span><span className="text-green-600 font-semibold">Grátis</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Taxa de entrega</span><span className="text-muted-foreground text-xs">Calculada na entrega</span></div>
                     <div className="flex justify-between font-bold text-base pt-1 border-t"><span>Total</span><span>{formatPrice(total)}</span></div>
                   </div>
                   {!showCupom ? (
@@ -415,7 +461,13 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                     <Input placeholder="Rua *" value={address.rua} onChange={(e) => setAddress({ ...address, rua: e.target.value })} className="flex-1" />
                     <Input placeholder="Nº *" value={address.numero} onChange={(e) => setAddress({ ...address, numero: e.target.value })} className="w-20" />
                   </div>
-                  <Input placeholder="Bairro *" value={address.bairro} onChange={(e) => setAddress({ ...address, bairro: e.target.value })} />
+                  <Input placeholder="Bairro *" value={address.bairro} onChange={(e) => handleBairroChange(e.target.value)} onBlur={() => handleBairroChange(address.bairro)} />
+                  {neighborhoodNotFound && address.bairro.trim() && (
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                      <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0" />
+                      <p className="text-xs text-destructive">Entrega indisponível para este bairro.</p>
+                    </div>
+                  )}
                   <Input placeholder="Complemento" value={address.complemento} onChange={(e) => setAddress({ ...address, complemento: e.target.value })} />
                   <Input placeholder="Ponto de referência" value={address.referencia} onChange={(e) => setAddress({ ...address, referencia: e.target.value })} />
                   <div className="flex gap-2">
@@ -424,7 +476,11 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                   </div>
                   <div className="flex justify-between text-sm pt-1">
                     <span className="text-muted-foreground">Taxa de entrega</span>
-                    <span className="text-green-600 font-semibold">Grátis</span>
+                    {deliveryFee !== null ? (
+                      <span className={deliveryFee === 0 ? "text-green-600 font-semibold" : "font-semibold"}>{deliveryFee === 0 ? "Grátis" : formatPrice(deliveryFee)}</span>
+                    ) : (
+                      <span className="text-muted-foreground text-xs">Informe o bairro</span>
+                    )}
                   </div>
                 </div>
               )}
@@ -480,9 +536,9 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                 ))}
                 <div className="border-t pt-2 space-y-1">
                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span>{formatPrice(total)}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Entrega</span><span className="text-green-600">Grátis</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Entrega</span><span className={deliveryType === "entrega" && deliveryFee && deliveryFee > 0 ? "font-semibold" : "text-green-600"}>{deliveryType === "retirada" || !deliveryFee || deliveryFee === 0 ? "Grátis" : formatPrice(deliveryFee)}</span></div>
                   {cupom && <div className="flex justify-between text-sm"><span className="text-muted-foreground">Cupom</span><span className="text-green-600">{cupom}</span></div>}
-                  <div className="flex justify-between font-bold"><span>Total</span><span>{formatPrice(total)}</span></div>
+                  <div className="flex justify-between font-bold"><span>Total</span><span>{formatPrice(orderTotal)}</span></div>
                 </div>
               </div>
             </div>
@@ -520,8 +576,8 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
               </div>
               <div className="border-t pt-3 space-y-1">
                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span>{formatPrice(total)}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Entrega</span><span className="text-green-600">Grátis</span></div>
-                <div className="flex justify-between font-bold"><span>Total</span><span className="text-primary">{formatPrice(total)}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Entrega</span><span className={deliveryType === "entrega" && deliveryFee && deliveryFee > 0 ? "font-semibold" : "text-green-600"}>{deliveryType === "retirada" || !deliveryFee || deliveryFee === 0 ? "Grátis" : formatPrice(deliveryFee)}</span></div>
+                <div className="flex justify-between font-bold"><span>Total</span><span className="text-primary">{formatPrice(orderTotal)}</span></div>
               </div>
             </div>
           )}
