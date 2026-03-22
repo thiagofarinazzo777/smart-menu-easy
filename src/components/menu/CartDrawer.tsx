@@ -20,6 +20,10 @@ interface CartDrawerProps {
   pixKey?: string;
   restaurantName?: string;
   restaurantCity?: string;
+  restaurantAddress?: string;
+  zone1Fee?: number;
+  zone2Fee?: number;
+  zone3Fee?: number;
 }
 
 type Step = "cart" | "delivery" | "confirmation" | "payment";
