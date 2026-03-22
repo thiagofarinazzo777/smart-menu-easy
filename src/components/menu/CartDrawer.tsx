@@ -463,9 +463,9 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                   </div>
                   <Input placeholder="Bairro *" value={address.bairro} onChange={(e) => handleBairroChange(e.target.value)} onBlur={() => handleBairroChange(address.bairro)} />
                   {neighborhoodNotFound && address.bairro.trim() && (
-                    <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
-                      <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0" />
-                      <p className="text-xs text-destructive">Entrega indisponível para este bairro.</p>
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                      <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                      <p className="text-xs text-amber-700 dark:text-amber-400">Taxa de entrega a combinar. Entre em contato pelo WhatsApp.</p>
                     </div>
                   )}
                   <Input placeholder="Complemento" value={address.complemento} onChange={(e) => setAddress({ ...address, complemento: e.target.value })} />
