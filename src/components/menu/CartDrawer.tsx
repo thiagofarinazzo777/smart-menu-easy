@@ -498,13 +498,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                     <Input placeholder="Rua *" value={address.rua} onChange={(e) => setAddress({ ...address, rua: e.target.value })} className="flex-1" />
                     <Input placeholder="Nº *" value={address.numero} onChange={(e) => setAddress({ ...address, numero: e.target.value })} className="w-20" />
                   </div>
-                  <Input placeholder="Bairro *" value={address.bairro} onChange={(e) => handleBairroChange(e.target.value)} onBlur={() => handleBairroChange(address.bairro)} />
-                  {neighborhoodNotFound && address.bairro.trim() && (
-                    <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                      <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                      <p className="text-xs text-amber-700 dark:text-amber-400">Taxa de entrega a combinar. Entre em contato pelo WhatsApp.</p>
-                    </div>
-                  )}
+                  <Input placeholder="Bairro *" value={address.bairro} onChange={(e) => setAddress({ ...address, bairro: e.target.value })} />
                   <Input placeholder="Complemento" value={address.complemento} onChange={(e) => setAddress({ ...address, complemento: e.target.value })} />
                   <Input placeholder="Ponto de referência" value={address.referencia} onChange={(e) => setAddress({ ...address, referencia: e.target.value })} />
                   <div className="flex gap-2">
@@ -513,7 +507,15 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                   </div>
                   <div className="flex justify-between text-sm pt-1">
                     <span className="text-muted-foreground">Taxa de entrega</span>
-                    <span className="text-muted-foreground text-xs">🛵 Taxa a combinar</span>
+                    {calculatingFee ? (
+                      <span className="flex items-center gap-1 text-muted-foreground text-xs"><Loader2 className="w-3 h-3 animate-spin" /> Calculando...</span>
+                    ) : deliveryFee !== null ? (
+                      <span className="font-semibold text-primary text-sm">{deliveryFee === 0 ? "Grátis" : formatPrice(deliveryFee)}</span>
+                    ) : feeUnavailable ? (
+                      <span className="text-muted-foreground text-xs">🛵 Taxa a combinar</span>
+                    ) : (
+                      <span className="text-muted-foreground text-xs">🛵 Taxa a combinar</span>
+                    )}
                   </div>
                 </div>
               )}
