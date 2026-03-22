@@ -67,26 +67,6 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     },
   });
 
-  const { data: restaurantConfig } = useQuery({
-    queryKey: ["restaurant-config-checkout"],
-    queryFn: async () => {
-      const { data } = await supabase.from("restaurant_config").select("zone1_fee, zone2_fee, zone3_fee").limit(1).single();
-      return data;
-    },
-  });
-
-  const zoneOptions = [
-    { label: "Zona 1 — até 3 km", fee: Number(restaurantConfig?.zone1_fee ?? 5) },
-    { label: "Zona 2 — 3 a 6 km", fee: Number(restaurantConfig?.zone2_fee ?? 8) },
-    { label: "Zona 3 — acima de 6 km", fee: Number(restaurantConfig?.zone3_fee ?? 12) },
-  ];
-
-  const handleZoneSelect = (zoneIndex: number) => {
-    setSelectedZone(zoneIndex);
-    setDeliveryFee(zoneOptions[zoneIndex].fee);
-    setNeighborhoodNotFound(false);
-  };
-
   const orderTotal = total + (deliveryType === "entrega" && deliveryFee !== null ? deliveryFee : 0);
 
   const pixPayloadCode = useMemo(() => {
