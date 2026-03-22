@@ -226,7 +226,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
 
     const entregaTipo = deliveryType === "entrega" ? "Entrega" : "Retirada";
 
-    const message = `Olá! Acabei de realizar o pagamento via Pix. Seguem os detalhes do meu pedido:\n\n👤 Nome: ${customerName}\n📦 Itens:\n${itemLines}\n\n💰 Total: ${formatPrice(total)}\n🛵 Entrega: ${entregaTipo}\n${deliveryType === "entrega" ? `📍 Endereço: ${enderecoInfo}\n` : ""}\n✅ Pagamento: Pix realizado`;
+    const message = `Olá! Acabei de realizar o pagamento via Pix. Seguem os detalhes do meu pedido:\n\n👤 Nome: ${customerName}\n📦 Itens:\n${itemLines}\n\n💰 Total: ${formatPrice(orderTotal)}\n🛵 Entrega: ${entregaTipo}\n${deliveryType === "entrega" ? `📍 Endereço: ${enderecoInfo}\n` : ""}\n✅ Pagamento: Pix realizado`;
 
     const phone = whatsappNumber.replace(/\D/g, "");
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
