@@ -390,6 +390,7 @@ export default function Admin() {
                   </div>
                 </div>
 
+                <div className="border-t pt-4 mt-4">
                   <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-primary" /> Taxa de Entrega por Zona
                   </h3>
