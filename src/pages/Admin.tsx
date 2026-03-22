@@ -220,10 +220,11 @@ export default function Admin() {
 
       <main className="max-w-2xl mx-auto px-4 py-6">
         <Tabs defaultValue="items">
-          <TabsList className="w-full mb-6">
+          <TabsList className="w-full mb-6 flex-wrap">
             <TabsTrigger value="items" className="flex-1">Cardápio</TabsTrigger>
             <TabsTrigger value="categories" className="flex-1">Categorias</TabsTrigger>
             <TabsTrigger value="hours" className="flex-1"><Clock className="w-3.5 h-3.5 mr-1" />Horários</TabsTrigger>
+            <TabsTrigger value="delivery" className="flex-1"><MapPin className="w-3.5 h-3.5 mr-1" />Entregas</TabsTrigger>
             <TabsTrigger value="settings" className="flex-1">Config</TabsTrigger>
           </TabsList>
 
