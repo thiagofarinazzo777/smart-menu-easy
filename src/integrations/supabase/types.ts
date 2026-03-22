@@ -110,6 +110,7 @@ export type Database = {
           id: string
           logo_url: string | null
           name: string
+          pix_key: string | null
           updated_at: string
           whatsapp_number: string | null
         }
@@ -119,6 +120,7 @@ export type Database = {
           id?: string
           logo_url?: string | null
           name?: string
+          pix_key?: string | null
           updated_at?: string
           whatsapp_number?: string | null
         }
@@ -128,6 +130,7 @@ export type Database = {
           id?: string
           logo_url?: string | null
           name?: string
+          pix_key?: string | null
           updated_at?: string
           whatsapp_number?: string | null
         }

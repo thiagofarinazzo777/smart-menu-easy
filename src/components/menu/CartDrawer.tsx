@@ -1,18 +1,22 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/hooks/useCart";
-import { Minus, Plus, ShoppingBag, MapPin, Loader2, Check, Bike, PersonStanding, CreditCard, Banknote, QrCode, Pencil, Tag, X, Copy, Share2, Clock } from "lucide-react";
+import { Minus, Plus, ShoppingBag, MapPin, Loader2, Check, Bike, PersonStanding, CreditCard, Banknote, QrCode, Pencil, Tag, X, Copy, Share2, Clock, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { formatBrazilianPhone, isValidBrazilianPhone } from "@/lib/phone-mask";
+import { generatePixPayload } from "@/lib/pix-payload";
 
 interface CartDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   whatsappNumber: string;
+  pixKey?: string;
+  restaurantName?: string;
+  restaurantCity?: string;
 }
 
 type Step = "cart" | "delivery" | "confirmation" | "payment";
@@ -25,7 +29,7 @@ interface ItemEdit {
   observation: string;
 }
 
-export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerProps) {
+export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", restaurantName = "Ouro & Brasa", restaurantCity = "Sao Paulo" }: CartDrawerProps) {
   const { items, updateQuantity, removeItem, clearCart, total } = useCart();
   const [step, setStep] = useState<Step>("cart");
   const [loadingCep, setLoadingCep] = useState(false);
@@ -46,7 +50,16 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
   });
   const { toast } = useToast();
 
-  const PIX_KEY = "3d40ac3f-4d4f-4b40-857d-0f07af1a7a64";
+  const pixPayloadCode = useMemo(() => {
+    if (!pixKey || total <= 0) return pixKey || "";
+    return generatePixPayload({
+      pixKey,
+      merchantName: restaurantName,
+      merchantCity: restaurantCity,
+      amount: total,
+      txId: crypto.randomUUID().replace(/-/g, "").substring(0, 25),
+    });
+  }, [pixKey, total, restaurantName, restaurantCity]);
 
   const formatPrice = (price: number) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(price);
@@ -58,19 +71,19 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
     onOpenChange(false);
   };
 
-  const copyPixKey = () => {
-    navigator.clipboard.writeText(PIX_KEY).then(() => {
+  const copyPixCode = () => {
+    navigator.clipboard.writeText(pixPayloadCode).then(() => {
       setPixCopied(true);
-      toast({ title: "Chave PIX copiada!" });
+      toast({ title: "Código PIX copiado!" });
       setTimeout(() => setPixCopied(false), 3000);
     });
   };
 
-  const sharePixKey = () => {
+  const sharePixCode = () => {
     if (navigator.share) {
-      navigator.share({ title: "Chave PIX", text: PIX_KEY });
+      navigator.share({ title: "Código PIX", text: pixPayloadCode });
     } else {
-      copyPixKey();
+      copyPixCode();
     }
   };
 
@@ -156,6 +169,32 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
     onOpenChange(false);
   };
 
+  const sendPixWhatsApp = () => {
+    const itemLines = items.map((ci) => {
+      const obs = observations[ci.item.id];
+      return `- ${ci.item.name} x${ci.quantity} — ${formatPrice(ci.item.price * ci.quantity)}${obs ? ` (Obs: ${obs})` : ""}`;
+    }).join("\n");
+
+    const enderecoInfo = deliveryType === "entrega"
+      ? `${address.rua}, ${address.numero} - ${address.bairro}, ${address.cidade} - ${address.estado}${address.complemento ? ` (${address.complemento})` : ""}${address.referencia ? `\nRef: ${address.referencia}` : ""}`
+      : "Retirada no estabelecimento";
+
+    const entregaTipo = deliveryType === "entrega" ? "Entrega" : "Retirada";
+
+    const message = `Olá! Acabei de realizar o pagamento via Pix. Seguem os detalhes do meu pedido:\n\n👤 Nome: ${customerName}\n📦 Itens:\n${itemLines}\n\n💰 Total: ${formatPrice(total)}\n🛵 Entrega: ${entregaTipo}\n${deliveryType === "entrega" ? `📍 Endereço: ${enderecoInfo}\n` : ""}\n✅ Pagamento: Pix realizado`;
+
+    const phone = whatsappNumber.replace(/\D/g, "");
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
+
+    clearCart();
+    setCustomerName(""); setCustomerPhone(""); setTroco(""); setPaymentType(null);
+    setShowPix(false); setCupom(""); setObservations({});
+    setAddress({ cep: "", rua: "", numero: "", bairro: "", complemento: "", referencia: "", cidade: "", estado: "" });
+    setStep("cart");
+    setDeliveryType(null);
+    onOpenChange(false);
+  };
+
   const StepIndicator = () => {
     const steps = [{ label: "Entrega", num: 1 }, { label: "Confirmação", num: 2 }, { label: "Pagamento", num: 3 }];
     const currentNum = step === "delivery" ? 1 : step === "confirmation" ? 2 : 3;
@@ -182,48 +221,49 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
 
         {/* PIX Screen */}
         {showPix && (
-          <div className="absolute inset-0 z-50 bg-white flex flex-col p-6 overflow-y-auto">
-            <p className="text-center font-bold text-base uppercase tracking-widest text-gray-500 mb-6">PAGAMENTO</p>
+          <div className="absolute inset-0 z-50 bg-background flex flex-col p-6 overflow-y-auto">
+            <p className="text-center font-bold text-base uppercase tracking-widest text-muted-foreground mb-6">PAGAMENTO</p>
             <div className="flex justify-center mb-4">
-              <div className="w-28 h-28 rounded-full bg-red-50 flex items-center justify-center">
+              <div className="w-28 h-28 rounded-full bg-primary/10 flex items-center justify-center">
                 <div className="relative">
-                  <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
                     <QrCode className="w-8 h-8 text-primary" />
                   </div>
-                  <div className="absolute -top-1 -right-2 w-7 h-7 rounded-full bg-red-200 flex items-center justify-center">
-                    <Clock className="w-4 h-4 text-red-500" />
+                  <div className="absolute -top-1 -right-2 w-7 h-7 rounded-full bg-primary/30 flex items-center justify-center">
+                    <Clock className="w-4 h-4 text-primary" />
                   </div>
                 </div>
               </div>
             </div>
             <h2 className="text-xl font-bold text-center mb-2">Pedido aguardando pagamento</h2>
             <p className="text-sm text-muted-foreground text-center mb-6">
-              Copie o código abaixo para pagar via Pix em qualquer aplicativo habilitado:
+              Copie o código Pix Copia e Cola abaixo para pagar:
             </p>
-            <div className="border-2 border-dashed border-gray-300 rounded-xl p-3 flex items-center gap-2 mb-2">
-              <p className="flex-1 text-sm text-gray-600 truncate font-mono">{PIX_KEY}</p>
-              <button onClick={copyPixKey} className={`p-2 rounded-lg transition-colors ${pixCopied ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+            <div className="border-2 border-dashed border-border rounded-xl p-3 flex items-center gap-2 mb-2">
+              <p className="flex-1 text-xs text-muted-foreground truncate font-mono">{pixPayloadCode}</p>
+              <button onClick={copyPixCode} className={`p-2 rounded-lg transition-colors ${pixCopied ? "bg-green-100 text-green-600" : "bg-muted text-muted-foreground hover:bg-accent"}`}>
                 {pixCopied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
               </button>
             </div>
-            <div className="bg-orange-50 rounded-xl p-3 text-center mb-2">
+            <div className="bg-primary/10 rounded-xl p-3 text-center mb-2">
               <p className="text-xs text-muted-foreground mb-1">Total a pagar</p>
               <p className="font-bold text-primary text-2xl">{formatPrice(total)}</p>
             </div>
             <p className="text-xs text-muted-foreground text-center mb-6">
-              Após o pagamento, confirme abaixo para enviar seu pedido.
+              Após o pagamento, envie seu pedido pelo WhatsApp.
             </p>
-            <Button onClick={copyPixKey} size="lg" className="w-full font-semibold mb-3">
+            <Button onClick={copyPixCode} size="lg" className="w-full font-semibold mb-3">
               <Copy className="w-4 h-4 mr-2" />
-              {pixCopied ? "Copiado!" : "Copiar código"}
+              {pixCopied ? "Copiado!" : "Copiar código PIX"}
             </Button>
-            <button onClick={sharePixKey} className="w-full text-center text-primary font-semibold text-sm mb-4">
+            <button onClick={sharePixCode} className="w-full text-center text-primary font-semibold text-sm mb-4">
               <span className="flex items-center justify-center gap-2">
                 <Share2 className="w-4 h-4" /> Compartilhar código
               </span>
             </button>
-            <Button onClick={() => { setShowPix(false); sendToWhatsApp(); }} variant="outline" className="w-full mb-2">
-              Já paguei, enviar pedido
+            <Button onClick={() => { setShowPix(false); sendPixWhatsApp(); }} size="lg" className="w-full font-semibold bg-green-600 hover:bg-green-700 text-white mb-2">
+              <MessageCircle className="w-5 h-5 mr-2" />
+              📲 Enviar pedido para o restaurante
             </Button>
             <Button variant="ghost" onClick={() => setShowPix(false)} className="w-full text-muted-foreground">
               Voltar

@@ -196,6 +196,9 @@ const Index = () => {
         open={cartOpen}
         onOpenChange={setCartOpen}
         whatsappNumber={config?.whatsapp_number ?? ""}
+        pixKey={(config as any)?.pix_key ?? ""}
+        restaurantName={config?.name ?? "Ouro & Brasa"}
+        restaurantCity="Sao Paulo"
       />
 
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />

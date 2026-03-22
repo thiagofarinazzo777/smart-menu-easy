@@ -1,0 +1,1 @@
+ALTER TABLE public.restaurant_config ADD COLUMN pix_key TEXT DEFAULT '';
