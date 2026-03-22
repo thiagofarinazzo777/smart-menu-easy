@@ -359,6 +359,38 @@ export default function Admin() {
 
                 <div className="border-t pt-4 mt-4">
                   <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-primary" /> Localidade e Avaliação
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium">Cidade (ex: Marília - SP)</label>
+                      <Input
+                        value={configForm.city}
+                        onChange={(e) => setConfigForm((p) => ({ ...p, city: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">Nota (ex: 4.8)</label>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="5"
+                        value={configForm.rating}
+                        onChange={(e) => setConfigForm((p) => ({ ...p, rating: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">Quantidade de avaliações (ex: 100+)</label>
+                      <Input
+                        value={configForm.rating_count}
+                        onChange={(e) => setConfigForm((p) => ({ ...p, rating_count: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                  <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-primary" /> Taxa de Entrega por Zona
                   </h3>
                   <p className="text-xs text-muted-foreground mb-3">Configure o valor da entrega para cada faixa de distância.</p>
