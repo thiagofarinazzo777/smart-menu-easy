@@ -80,20 +80,22 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background pb-16">
-      <MenuHeader config={config ?? null} isOpen={restaurantIsOpen} nextOpenInfo={nextOpenInfo} searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+      <MenuHeader
+        config={config ?? null}
+        isOpen={restaurantIsOpen}
+        nextOpenInfo={nextOpenInfo}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        themeToggle={<ThemeToggle />}
+        greeting={user ? `Olá, ${displayName}` : undefined}
+      />
 
       {/* User bar */}
-      <div className="max-w-md mx-auto px-4 py-2 flex items-center justify-end gap-2">
-        <ThemeToggle />
+      <div className="max-w-md mx-auto px-4 py-1 flex items-center justify-end gap-2">
         {user ? (
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-foreground truncate max-w-[150px]">
-              Olá, {displayName}
-            </span>
-            <button onClick={signOut} className="text-muted-foreground hover:text-foreground">
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
+          <button onClick={signOut} className="text-muted-foreground hover:text-foreground">
+            <LogOut className="w-4 h-4" />
+          </button>
         ) : (
           <button
             onClick={() => setAuthOpen(true)}
