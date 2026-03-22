@@ -40,10 +40,31 @@ export function useIsRestaurantOpen() {
       const dayOfWeek = now.getDay(); // 0=Sun
       const currentTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
 
+      // Check if currently open — today's slot or yesterday's overnight slot
       const today = hours.find((h) => h.day_of_week === dayOfWeek);
+      const yesterday = hours.find((h) => h.day_of_week === (dayOfWeek + 6) % 7);
 
-      if (today && !today.is_closed && today.open_time && today.close_time) {
-        if (currentTime >= today.open_time && currentTime < today.close_time) {
+      const isInSlot = (h: BusinessHour) => {
+        if (!h || h.is_closed || !h.open_time || !h.close_time) return false;
+        if (h.close_time > h.open_time) {
+          // Same-day slot (e.g. 08:00–17:00)
+          return currentTime >= h.open_time && currentTime < h.close_time;
+        } else {
+          // Overnight slot (e.g. 19:00–04:00)
+          return currentTime >= h.open_time || currentTime < h.close_time;
+        }
+      };
+
+      // Today's slot with overnight: check if we're in today's range
+      if (today && isInSlot(today)) {
+        setIsOpen(true);
+        setNextOpenInfo("");
+        return;
+      }
+
+      // Yesterday's overnight slot: e.g. yesterday 19:00–04:00, now is 02:00
+      if (yesterday && !yesterday.is_closed && yesterday.open_time && yesterday.close_time && yesterday.close_time < yesterday.open_time) {
+        if (currentTime < yesterday.close_time) {
           setIsOpen(true);
           setNextOpenInfo("");
           return;
