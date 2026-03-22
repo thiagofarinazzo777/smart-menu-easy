@@ -112,26 +112,6 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     }
   };
 
-  const handleBairroChange = (value: string) => {
-    setAddress((prev) => ({ ...prev, bairro: value }));
-    if (!value.trim()) {
-      setDeliveryFee(null);
-      setNeighborhoodNotFound(false);
-      return;
-    }
-    const normalized = value.trim().toLowerCase();
-    const zone = deliveryZones.find(
-      (z: any) => z.neighborhood.toLowerCase() === normalized
-    );
-    if (zone) {
-      setDeliveryFee(Number(zone.fee));
-      setNeighborhoodNotFound(false);
-    } else {
-      setDeliveryFee(null);
-      setNeighborhoodNotFound(deliveryZones.length > 0);
-    }
-  };
-
   const calculateDeliveryFee = useCallback(async (fullAddress: string) => {
     if (!restaurantAddress) {
       setFeeUnavailable(true);
