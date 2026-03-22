@@ -169,6 +169,32 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     onOpenChange(false);
   };
 
+  const sendPixWhatsApp = () => {
+    const itemLines = items.map((ci) => {
+      const obs = observations[ci.item.id];
+      return `- ${ci.item.name} x${ci.quantity} — ${formatPrice(ci.item.price * ci.quantity)}${obs ? ` (Obs: ${obs})` : ""}`;
+    }).join("\n");
+
+    const enderecoInfo = deliveryType === "entrega"
+      ? `${address.rua}, ${address.numero} - ${address.bairro}, ${address.cidade} - ${address.estado}${address.complemento ? ` (${address.complemento})` : ""}${address.referencia ? `\nRef: ${address.referencia}` : ""}`
+      : "Retirada no estabelecimento";
+
+    const entregaTipo = deliveryType === "entrega" ? "Entrega" : "Retirada";
+
+    const message = `Olá! Acabei de realizar o pagamento via Pix. Seguem os detalhes do meu pedido:\n\n👤 Nome: ${customerName}\n📦 Itens:\n${itemLines}\n\n💰 Total: ${formatPrice(total)}\n🛵 Entrega: ${entregaTipo}\n${deliveryType === "entrega" ? `📍 Endereço: ${enderecoInfo}\n` : ""}\n✅ Pagamento: Pix realizado`;
+
+    const phone = whatsappNumber.replace(/\D/g, "");
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
+
+    clearCart();
+    setCustomerName(""); setCustomerPhone(""); setTroco(""); setPaymentType(null);
+    setShowPix(false); setCupom(""); setObservations({});
+    setAddress({ cep: "", rua: "", numero: "", bairro: "", complemento: "", referencia: "", cidade: "", estado: "" });
+    setStep("cart");
+    setDeliveryType(null);
+    onOpenChange(false);
+  };
+
   const StepIndicator = () => {
     const steps = [{ label: "Entrega", num: 1 }, { label: "Confirmação", num: 2 }, { label: "Pagamento", num: 3 }];
     const currentNum = step === "delivery" ? 1 : step === "confirmation" ? 2 : 3;
