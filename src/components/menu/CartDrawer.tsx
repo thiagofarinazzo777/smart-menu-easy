@@ -48,6 +48,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
   const [observations, setObservations] = useState<Record<string, string>>({});
   const [deliveryFee, setDeliveryFee] = useState<number | null>(null);
   const [neighborhoodNotFound, setNeighborhoodNotFound] = useState(false);
+  const [selectedZone, setSelectedZone] = useState<number | null>(null);
   const [address, setAddress] = useState({
     cep: "", rua: "", numero: "", bairro: "",
     complemento: "", referencia: "", cidade: "", estado: "",
