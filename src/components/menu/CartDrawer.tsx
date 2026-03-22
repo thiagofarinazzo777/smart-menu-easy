@@ -408,7 +408,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                   </button>
                   <div className="border-t pt-3 space-y-1">
                     <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span>{formatPrice(total)}</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Taxa de entrega</span><span className="text-muted-foreground text-xs">Calculada na entrega</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Taxa de entrega</span><span className="text-muted-foreground text-xs">🛵 Taxa a combinar</span></div>
                     <div className="flex justify-between font-bold text-base pt-1 border-t"><span>Total</span><span>{formatPrice(total)}</span></div>
                   </div>
                   {!showCupom ? (
