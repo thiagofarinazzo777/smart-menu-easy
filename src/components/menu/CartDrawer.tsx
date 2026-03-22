@@ -36,10 +36,11 @@ interface ItemEdit {
   observation: string;
 }
 
-export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", restaurantName = "Ouro & Brasa", restaurantCity = "Sao Paulo" }: CartDrawerProps) {
+export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", restaurantName = "Ouro & Brasa", restaurantCity = "Sao Paulo", restaurantAddress = "", zone1Fee = 5, zone2Fee = 8, zone3Fee = 12 }: CartDrawerProps) {
   const { items, updateQuantity, removeItem, clearCart, total } = useCart();
   const [step, setStep] = useState<Step>("cart");
   const [loadingCep, setLoadingCep] = useState(false);
+  const [calculatingFee, setCalculatingFee] = useState(false);
   const [deliveryType, setDeliveryType] = useState<DeliveryType | null>(null);
   const [paymentType, setPaymentType] = useState<PaymentType>(null);
   const [troco, setTroco] = useState("");
@@ -52,6 +53,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
   const [editingItem, setEditingItem] = useState<ItemEdit | null>(null);
   const [observations, setObservations] = useState<Record<string, string>>({});
   const [deliveryFee, setDeliveryFee] = useState<number | null>(null);
+  const [feeUnavailable, setFeeUnavailable] = useState(false);
   const [neighborhoodNotFound, setNeighborhoodNotFound] = useState(false);
   const [address, setAddress] = useState({
     cep: "", rua: "", numero: "", bairro: "",
