@@ -11,9 +11,9 @@ interface MenuHeaderProps {
 }
 
 export function MenuHeader({ config, isOpen, nextOpenInfo, searchQuery, onSearchChange }: MenuHeaderProps) {
-  const city = (config as any)?.city || "Marília - SP";
-  const rating = (config as any)?.rating ?? 4.8;
-  const ratingCount = (config as any)?.rating_count || "100+";
+  const city = config?.city || "Marília - SP";
+  const rating = config?.rating ?? 4.8;
+  const ratingCount = config?.rating_count || "100+";
 
   return (
     <>
@@ -44,7 +44,7 @@ export function MenuHeader({ config, isOpen, nextOpenInfo, searchQuery, onSearch
 
         {/* Overlapping logo circle */}
         <div className="absolute left-1/2 -translate-x-1/2 -bottom-10 z-20">
-          <div className="w-20 h-20 rounded-full bg-background border-4 border-background shadow-lg flex items-center justify-center overflow-hidden">
+          <div className="w-20 h-20 rounded-full bg-card border-4 border-card shadow-lg flex items-center justify-center overflow-hidden">
             {config?.logo_url ? (
               <img src={config.logo_url} alt={config.name} className="w-full h-full object-cover" />
             ) : (
@@ -56,10 +56,10 @@ export function MenuHeader({ config, isOpen, nextOpenInfo, searchQuery, onSearch
         </div>
       </div>
 
-      {/* Info section */}
-      <div className="w-full bg-background">
-        <div className="max-w-md mx-auto px-5 pt-14 pb-4 flex flex-col items-center gap-2">
-          <h2 className="text-lg font-bold text-foreground text-center">{config?.name || "Ouro & Brasa"}</h2>
+      {/* Restaurant info card */}
+      <div className="max-w-md mx-auto px-4 pt-14 pb-2">
+        <div className="bg-card rounded-2xl shadow-sm border border-border p-5 flex flex-col items-center gap-2">
+          <h2 className="text-lg font-bold text-card-foreground text-center">{config?.name || "Ouro & Brasa"}</h2>
 
           <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
             <MapPin className="w-3.5 h-3.5" />
@@ -72,7 +72,7 @@ export function MenuHeader({ config, isOpen, nextOpenInfo, searchQuery, onSearch
           </span>
 
           {isOpen ? (
-            <span className="inline-flex items-center gap-2 text-xs font-bold text-primary mt-1">
+            <span className="inline-flex items-center gap-2 text-xs font-bold text-green-600 dark:text-green-400 mt-1">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
@@ -85,26 +85,30 @@ export function MenuHeader({ config, isOpen, nextOpenInfo, searchQuery, onSearch
               Fechado · {nextOpenInfo || "Abre às 19:00"}
             </span>
           )}
+        </div>
+      </div>
 
-          <div className="flex items-center gap-2 mt-2">
-            <button className="inline-flex items-center gap-1.5 bg-secondary text-foreground text-xs font-medium px-4 py-2 border border-border shadow-sm" style={{ borderRadius: 14 }}>
+      {/* Delivery info card */}
+      <div className="max-w-md mx-auto px-4 py-2">
+        <div className="bg-card rounded-2xl shadow-sm border border-border p-4 flex flex-col items-center gap-3">
+          <div className="flex items-center gap-2">
+            <button className="inline-flex items-center gap-1.5 bg-secondary text-secondary-foreground text-xs font-medium px-4 py-2 rounded-xl border border-border shadow-sm">
               <Bike className="w-3.5 h-3.5" />
               Entrega
               <ChevronDown className="w-3 h-3 text-muted-foreground" />
             </button>
-            <button className="inline-flex items-center gap-1.5 bg-secondary text-foreground text-xs font-medium px-4 py-2 border border-border shadow-sm" style={{ borderRadius: 14 }}>
+            <button className="inline-flex items-center gap-1.5 bg-secondary text-secondary-foreground text-xs font-medium px-4 py-2 rounded-xl border border-border shadow-sm">
               <Clock className="w-3.5 h-3.5" />
               Hoje · 40–70 min
             </button>
           </div>
-
-          <p className="text-[11px] text-muted-foreground font-body">💰 Pedido mínimo R$ 30,00</p>
+          <p className="text-[11px] text-muted-foreground">💰 Pedido mínimo R$ 30,00</p>
         </div>
       </div>
 
-      {/* Search bar */}
-      <div className="w-full bg-background border-b border-t">
-        <div className="max-w-md mx-auto px-4 py-2">
+      {/* Search bar card */}
+      <div className="max-w-md mx-auto px-4 py-2">
+        <div className="bg-card rounded-2xl shadow-sm border border-border p-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
@@ -112,8 +116,7 @@ export function MenuHeader({ config, isOpen, nextOpenInfo, searchQuery, onSearch
               placeholder="Buscar no cardápio..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 text-sm bg-muted/50 text-foreground placeholder:text-muted-foreground border border-border focus:outline-none focus:ring-2 focus:ring-primary/30"
-              style={{ borderRadius: 14 }}
+              className="w-full pl-9 pr-4 py-2.5 text-sm bg-muted/50 text-foreground placeholder:text-muted-foreground border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
         </div>
