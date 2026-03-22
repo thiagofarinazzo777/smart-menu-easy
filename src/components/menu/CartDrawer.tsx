@@ -177,8 +177,8 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     if (deliveryType === "entrega" && (!address.rua || !address.numero || !address.bairro)) {
       toast({ title: "Preencha o endereço completo", variant: "destructive" }); return;
     }
-    if (deliveryType === "entrega" && selectedZone === null) {
-      toast({ title: "Selecione a zona de entrega", variant: "destructive" }); return;
+    if (deliveryType === "entrega" && deliveryFee === null && deliveryZones.length > 0 && neighborhoodNotFound) {
+      toast({ title: "Entrega indisponível para este bairro", variant: "destructive" }); return;
     }
     setStep("confirmation");
   };
