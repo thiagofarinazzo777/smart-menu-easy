@@ -17,6 +17,8 @@ export function MenuHeader({ config, isOpen, nextOpenInfo, searchQuery, onSearch
   const city = config?.city || "Marília - SP";
   const rating = config?.rating ?? 4.8;
   const ratingCount = config?.rating_count || "100+";
+  const deliveryTime = (config as any)?.delivery_time || "40-70 min";
+  const minOrder = (config as any)?.min_order ?? 30;
 
   return (
     <>
