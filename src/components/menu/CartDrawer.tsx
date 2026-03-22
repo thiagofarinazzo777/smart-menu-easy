@@ -29,7 +29,7 @@ interface ItemEdit {
   observation: string;
 }
 
-export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerProps) {
+export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", restaurantName = "Ouro & Brasa", restaurantCity = "Sao Paulo" }: CartDrawerProps) {
   const { items, updateQuantity, removeItem, clearCart, total } = useCart();
   const [step, setStep] = useState<Step>("cart");
   const [loadingCep, setLoadingCep] = useState(false);
@@ -50,7 +50,16 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber }: CartDrawerPro
   });
   const { toast } = useToast();
 
-  const PIX_KEY = "3d40ac3f-4d4f-4b40-857d-0f07af1a7a64";
+  const pixPayloadCode = useMemo(() => {
+    if (!pixKey || total <= 0) return pixKey || "";
+    return generatePixPayload({
+      pixKey,
+      merchantName: restaurantName,
+      merchantCity: restaurantCity,
+      amount: total,
+      txId: crypto.randomUUID().replace(/-/g, "").substring(0, 25),
+    });
+  }, [pixKey, total, restaurantName, restaurantCity]);
 
   const formatPrice = (price: number) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(price);
