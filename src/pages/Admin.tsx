@@ -399,6 +399,18 @@ export default function Admin() {
 
                 <div className="border-t pt-4 mt-4">
                   <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-primary" /> Endereço do Restaurante
+                  </h3>
+                  <p className="text-xs text-muted-foreground mb-2">Usado para calcular a taxa de entrega por distância.</p>
+                  <Input
+                    placeholder="Ex: Rua das Flores 123, Centro, Marília, SP"
+                    value={configForm.restaurant_address}
+                    onChange={(e) => setConfigForm((p) => ({ ...p, restaurant_address: e.target.value }))}
+                  />
+                </div>
+
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
                     <Clock className="w-4 h-4 text-primary" /> Entrega e Pedido Mínimo
                   </h3>
                   <div className="space-y-3">
