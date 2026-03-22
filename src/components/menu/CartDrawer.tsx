@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { formatBrazilianPhone, isValidBrazilianPhone } from "@/lib/phone-mask";
 import { generatePixPayload } from "@/lib/pix-payload";
-import { geocodeAddress, haversineDistance, getZoneFee } from "@/lib/geocoding";
+import { geocodeAddress, geocodeCep, haversineDistance, getZoneFee } from "@/lib/geocoding";
 
 interface CartDrawerProps {
   open: boolean;
