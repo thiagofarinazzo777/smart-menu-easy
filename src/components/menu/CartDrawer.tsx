@@ -195,48 +195,49 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
 
         {/* PIX Screen */}
         {showPix && (
-          <div className="absolute inset-0 z-50 bg-white flex flex-col p-6 overflow-y-auto">
-            <p className="text-center font-bold text-base uppercase tracking-widest text-gray-500 mb-6">PAGAMENTO</p>
+          <div className="absolute inset-0 z-50 bg-background flex flex-col p-6 overflow-y-auto">
+            <p className="text-center font-bold text-base uppercase tracking-widest text-muted-foreground mb-6">PAGAMENTO</p>
             <div className="flex justify-center mb-4">
-              <div className="w-28 h-28 rounded-full bg-red-50 flex items-center justify-center">
+              <div className="w-28 h-28 rounded-full bg-primary/10 flex items-center justify-center">
                 <div className="relative">
-                  <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
                     <QrCode className="w-8 h-8 text-primary" />
                   </div>
-                  <div className="absolute -top-1 -right-2 w-7 h-7 rounded-full bg-red-200 flex items-center justify-center">
-                    <Clock className="w-4 h-4 text-red-500" />
+                  <div className="absolute -top-1 -right-2 w-7 h-7 rounded-full bg-primary/30 flex items-center justify-center">
+                    <Clock className="w-4 h-4 text-primary" />
                   </div>
                 </div>
               </div>
             </div>
             <h2 className="text-xl font-bold text-center mb-2">Pedido aguardando pagamento</h2>
             <p className="text-sm text-muted-foreground text-center mb-6">
-              Copie o código abaixo para pagar via Pix em qualquer aplicativo habilitado:
+              Copie o código Pix Copia e Cola abaixo para pagar:
             </p>
-            <div className="border-2 border-dashed border-gray-300 rounded-xl p-3 flex items-center gap-2 mb-2">
-              <p className="flex-1 text-sm text-gray-600 truncate font-mono">{PIX_KEY}</p>
-              <button onClick={copyPixKey} className={`p-2 rounded-lg transition-colors ${pixCopied ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+            <div className="border-2 border-dashed border-border rounded-xl p-3 flex items-center gap-2 mb-2">
+              <p className="flex-1 text-xs text-muted-foreground truncate font-mono">{pixPayloadCode}</p>
+              <button onClick={copyPixCode} className={`p-2 rounded-lg transition-colors ${pixCopied ? "bg-green-100 text-green-600" : "bg-muted text-muted-foreground hover:bg-accent"}`}>
                 {pixCopied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
               </button>
             </div>
-            <div className="bg-orange-50 rounded-xl p-3 text-center mb-2">
+            <div className="bg-primary/10 rounded-xl p-3 text-center mb-2">
               <p className="text-xs text-muted-foreground mb-1">Total a pagar</p>
               <p className="font-bold text-primary text-2xl">{formatPrice(total)}</p>
             </div>
             <p className="text-xs text-muted-foreground text-center mb-6">
-              Após o pagamento, confirme abaixo para enviar seu pedido.
+              Após o pagamento, envie seu pedido pelo WhatsApp.
             </p>
-            <Button onClick={copyPixKey} size="lg" className="w-full font-semibold mb-3">
+            <Button onClick={copyPixCode} size="lg" className="w-full font-semibold mb-3">
               <Copy className="w-4 h-4 mr-2" />
-              {pixCopied ? "Copiado!" : "Copiar código"}
+              {pixCopied ? "Copiado!" : "Copiar código PIX"}
             </Button>
-            <button onClick={sharePixKey} className="w-full text-center text-primary font-semibold text-sm mb-4">
+            <button onClick={sharePixCode} className="w-full text-center text-primary font-semibold text-sm mb-4">
               <span className="flex items-center justify-center gap-2">
                 <Share2 className="w-4 h-4" /> Compartilhar código
               </span>
             </button>
-            <Button onClick={() => { setShowPix(false); sendToWhatsApp(); }} variant="outline" className="w-full mb-2">
-              Já paguei, enviar pedido
+            <Button onClick={() => { setShowPix(false); sendPixWhatsApp(); }} size="lg" className="w-full font-semibold bg-green-600 hover:bg-green-700 text-white mb-2">
+              <MessageCircle className="w-5 h-5 mr-2" />
+              📲 Enviar pedido para o restaurante
             </Button>
             <Button variant="ghost" onClick={() => setShowPix(false)} className="w-full text-muted-foreground">
               Voltar
