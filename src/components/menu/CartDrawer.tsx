@@ -46,11 +46,27 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
   const [customerPhone, setCustomerPhone] = useState("");
   const [editingItem, setEditingItem] = useState<ItemEdit | null>(null);
   const [observations, setObservations] = useState<Record<string, string>>({});
+  const [deliveryFee, setDeliveryFee] = useState<number | null>(null);
+  const [neighborhoodNotFound, setNeighborhoodNotFound] = useState(false);
   const [address, setAddress] = useState({
     cep: "", rua: "", numero: "", bairro: "",
     complemento: "", referencia: "", cidade: "", estado: "",
   });
   const { toast } = useToast();
+
+  const { data: deliveryZones = [] } = useQuery({
+    queryKey: ["delivery-zones"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("delivery_zones")
+        .select("*")
+        .eq("is_active", true)
+        .order("neighborhood");
+      return data ?? [];
+    },
+  });
+
+  const orderTotal = total + (deliveryType === "entrega" && deliveryFee !== null ? deliveryFee : 0);
 
   const pixPayloadCode = useMemo(() => {
     if (!pixKey || total <= 0) return pixKey || "";
