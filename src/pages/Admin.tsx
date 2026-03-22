@@ -397,6 +397,31 @@ export default function Admin() {
 
                 <div className="border-t pt-4 mt-4">
                   <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-primary" /> Entrega e Pedido Mínimo
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium">Tempo estimado de entrega (ex: 40-70 min)</label>
+                      <Input
+                        value={configForm.delivery_time}
+                        onChange={(e) => setConfigForm((p) => ({ ...p, delivery_time: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">Pedido mínimo (R$)</label>
+                      <Input
+                        type="number"
+                        step="1"
+                        min="0"
+                        value={configForm.min_order}
+                        onChange={(e) => setConfigForm((p) => ({ ...p, min_order: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-primary" /> Taxa de Entrega por Zona
                   </h3>
                   <p className="text-xs text-muted-foreground mb-3">Configure o valor da entrega para cada faixa de distância.</p>
