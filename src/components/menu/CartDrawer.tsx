@@ -132,6 +132,36 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     }
   };
 
+  const calculateDeliveryFee = useCallback(async (fullAddress: string) => {
+    if (!restaurantAddress) {
+      setFeeUnavailable(true);
+      setDeliveryFee(null);
+      return;
+    }
+    setCalculatingFee(true);
+    setFeeUnavailable(false);
+    try {
+      const [customerCoords, restaurantCoords] = await Promise.all([
+        geocodeAddress(fullAddress),
+        geocodeAddress(restaurantAddress),
+      ]);
+      if (!customerCoords || !restaurantCoords) {
+        setFeeUnavailable(true);
+        setDeliveryFee(null);
+        return;
+      }
+      const distance = haversineDistance(customerCoords, restaurantCoords);
+      const { fee } = getZoneFee(distance, zone1Fee, zone2Fee, zone3Fee);
+      setDeliveryFee(fee);
+      setFeeUnavailable(false);
+    } catch {
+      setFeeUnavailable(true);
+      setDeliveryFee(null);
+    } finally {
+      setCalculatingFee(false);
+    }
+  }, [restaurantAddress, zone1Fee, zone2Fee, zone3Fee]);
+
   const buscarCep = async (cep: string) => {
     const cepLimpo = cep.replace(/\D/g, "");
     if (cepLimpo.length !== 8) return;
@@ -140,11 +170,14 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
       const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
       const data = await response.json();
       if (data.erro) { toast({ title: "CEP não encontrado", variant: "destructive" }); return; }
-      setAddress((prev) => ({ ...prev, rua: data.logradouro || "", cidade: data.localidade || "", estado: data.uf || "" }));
-      if (data.bairro) {
-        handleBairroChange(data.bairro);
-        setAddress((prev) => ({ ...prev, bairro: data.bairro }));
-      }
+      const rua = data.logradouro || "";
+      const bairro = data.bairro || "";
+      const cidade = data.localidade || "";
+      const estado = data.uf || "";
+      setAddress((prev) => ({ ...prev, rua, bairro, cidade, estado }));
+      // Auto-calculate fee using geocoding
+      const fullAddr = `${rua}, ${bairro}, ${cidade}, ${estado}, Brasil`;
+      calculateDeliveryFee(fullAddr);
     } catch { toast({ title: "Erro ao buscar CEP", variant: "destructive" }); }
     finally { setLoadingCep(false); }
   };
