@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { formatBrazilianPhone, isValidBrazilianPhone } from "@/lib/phone-mask";
 import { generatePixPayload } from "@/lib/pix-payload";
-import { geocodeAddress, haversineDistance, getZoneFee } from "@/lib/geocoding";
+import { geocodeAddress, geocodeCep, haversineDistance, getZoneFee } from "@/lib/geocoding";
 
 interface CartDrawerProps {
   open: boolean;
@@ -99,7 +99,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     }
   };
 
-  const calculateDeliveryFee = useCallback(async (fullAddress: string) => {
+  const calculateDeliveryFee = useCallback(async (customerAddress: string) => {
     if (!restaurantAddress) {
       setFeeUnavailable(true);
       setDeliveryFee(null);
@@ -109,8 +109,8 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     setFeeUnavailable(false);
     try {
       const [customerCoords, restaurantCoords] = await Promise.all([
-        geocodeAddress(fullAddress),
-        geocodeAddress(restaurantAddress),
+        geocodeAddress(customerAddress),
+        geocodeCep(restaurantAddress),
       ]);
       if (!customerCoords || !restaurantCoords) {
         setFeeUnavailable(true);
