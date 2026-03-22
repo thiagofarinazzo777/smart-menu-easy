@@ -69,15 +69,15 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
   const orderTotal = total + (deliveryType === "entrega" && deliveryFee !== null ? deliveryFee : 0);
 
   const pixPayloadCode = useMemo(() => {
-    if (!pixKey || total <= 0) return pixKey || "";
+    if (!pixKey || orderTotal <= 0) return pixKey || "";
     return generatePixPayload({
       pixKey,
       merchantName: restaurantName,
       merchantCity: restaurantCity,
-      amount: total,
+      amount: orderTotal,
       txId: crypto.randomUUID().replace(/-/g, "").substring(0, 25),
     });
-  }, [pixKey, total, restaurantName, restaurantCity]);
+  }, [pixKey, orderTotal, restaurantName, restaurantCity]);
 
   const formatPrice = (price: number) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(price);
