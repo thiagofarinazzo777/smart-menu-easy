@@ -223,10 +223,10 @@ const Index = () => {
         pixKey={(config as any)?.pix_key ?? ""}
         restaurantName={config?.name ?? "Ouro & Brasa"}
         restaurantCity={(config as any)?.city ?? "Sao Paulo"}
-        restaurantAddress={(config as any)?.restaurant_address ?? ""}
-        zone1Fee={Number(config?.zone1_fee ?? 5)}
-        zone2Fee={Number(config?.zone2_fee ?? 8)}
-        zone3Fee={Number(config?.zone3_fee ?? 12)}
+        restaurantAddress=""
+        zone1Fee={0}
+        zone2Fee={0}
+        zone3Fee={0}
       />
 
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
