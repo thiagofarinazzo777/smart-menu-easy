@@ -74,6 +74,7 @@ const Index = () => {
 
       {/* User bar */}
       <div className="max-w-md mx-auto px-4 py-2 flex items-center justify-end gap-2">
+        <ThemeToggle />
         {user ? (
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-foreground truncate max-w-[150px]">

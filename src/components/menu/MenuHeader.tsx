@@ -65,7 +65,7 @@ export function MenuHeader({ config }: MenuHeaderProps) {
       </div>
 
       {/* Info section below hero */}
-      <div className="w-full" style={{ backgroundColor: "#f5f5f5" }}>
+      <div className="w-full bg-secondary">
         <div className="max-w-md mx-auto px-5 py-4 flex flex-col items-center gap-3">
           {/* Status badge */}
           {isOpen ? (
