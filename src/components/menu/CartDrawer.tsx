@@ -99,7 +99,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     }
   };
 
-  const calculateDeliveryFee = useCallback(async (fullAddress: string) => {
+  const calculateDeliveryFee = useCallback(async (customerAddress: string) => {
     if (!restaurantAddress) {
       setFeeUnavailable(true);
       setDeliveryFee(null);
@@ -109,8 +109,8 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     setFeeUnavailable(false);
     try {
       const [customerCoords, restaurantCoords] = await Promise.all([
-        geocodeAddress(fullAddress),
-        geocodeAddress(restaurantAddress),
+        geocodeAddress(customerAddress),
+        geocodeCep(restaurantAddress),
       ]);
       if (!customerCoords || !restaurantCoords) {
         setFeeUnavailable(true);

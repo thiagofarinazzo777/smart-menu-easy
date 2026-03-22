@@ -1,4 +1,4 @@
-// Geocoding via Nominatim (OpenStreetMap) + Haversine distance
+// Geocoding via ViaCEP + Nominatim (OpenStreetMap) + Haversine distance
 
 interface Coordinates {
   lat: number;
@@ -14,6 +14,20 @@ export async function geocodeAddress(address: string): Promise<Coordinates | nul
     const data = await res.json();
     if (data.length === 0) return null;
     return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+  } catch {
+    return null;
+  }
+}
+
+export async function geocodeCep(cep: string): Promise<Coordinates | null> {
+  try {
+    const cepLimpo = cep.replace(/\D/g, "");
+    if (cepLimpo.length !== 8) return null;
+    const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+    const data = await res.json();
+    if (data.erro) return null;
+    const addr = `${data.logradouro || ""}, ${data.bairro || ""}, ${data.localidade || ""}, ${data.uf || ""}, Brasil`;
+    return geocodeAddress(addr);
   } catch {
     return null;
   }
