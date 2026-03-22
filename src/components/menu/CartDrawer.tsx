@@ -408,7 +408,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                   </button>
                   <div className="border-t pt-3 space-y-1">
                     <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span>{formatPrice(total)}</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Taxa de entrega</span><span className="text-muted-foreground text-xs">Calculada na entrega</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">Taxa de entrega</span><span className="text-muted-foreground text-xs">🛵 Taxa a combinar</span></div>
                     <div className="flex justify-between font-bold text-base pt-1 border-t"><span>Total</span><span>{formatPrice(total)}</span></div>
                   </div>
                   {!showCupom ? (
@@ -473,13 +473,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                   </div>
                   <div className="flex justify-between text-sm pt-1">
                     <span className="text-muted-foreground">Taxa de entrega</span>
-                    {deliveryFee !== null ? (
-                      <span className={deliveryFee === 0 ? "text-green-600 font-semibold" : "font-semibold"}>{deliveryFee === 0 ? "Grátis" : formatPrice(deliveryFee)}</span>
-                    ) : neighborhoodNotFound ? (
-                      <span className="text-muted-foreground text-xs">Taxa a combinar</span>
-                    ) : (
-                      <span className="text-muted-foreground text-xs">Informe o bairro</span>
-                    )}
+                    <span className="text-muted-foreground text-xs">🛵 Taxa a combinar</span>
                   </div>
                 </div>
               )}
@@ -535,7 +529,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
                 ))}
                 <div className="border-t pt-2 space-y-1">
                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span>{formatPrice(total)}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Entrega</span><span className={deliveryType === "entrega" && deliveryFee && deliveryFee > 0 ? "font-semibold" : "text-green-600"}>{deliveryType === "retirada" || !deliveryFee || deliveryFee === 0 ? "Grátis" : formatPrice(deliveryFee)}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Entrega</span><span className="text-muted-foreground text-xs">🛵 Taxa a combinar</span></div>
                   {cupom && <div className="flex justify-between text-sm"><span className="text-muted-foreground">Cupom</span><span className="text-green-600">{cupom}</span></div>}
                   <div className="flex justify-between font-bold"><span>Total</span><span>{formatPrice(orderTotal)}</span></div>
                 </div>
@@ -575,7 +569,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
               </div>
               <div className="border-t pt-3 space-y-1">
                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span>{formatPrice(total)}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Entrega</span><span className={deliveryType === "entrega" && deliveryFee && deliveryFee > 0 ? "font-semibold" : "text-green-600"}>{deliveryType === "retirada" || !deliveryFee || deliveryFee === 0 ? "Grátis" : formatPrice(deliveryFee)}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Entrega</span><span className="text-muted-foreground text-xs">🛵 Taxa a combinar</span></div>
                 <div className="flex justify-between font-bold"><span>Total</span><span className="text-primary">{formatPrice(orderTotal)}</span></div>
               </div>
             </div>
