@@ -1,31 +1,14 @@
-import { useState, useEffect } from "react";
 import { Tables } from "@/integrations/supabase/types";
 import { Flame, Clock, Bike, ChevronDown } from "lucide-react";
 import heroFireBg from "@/assets/hero-fire-bg.jpg";
 
 interface MenuHeaderProps {
   config: Tables<"restaurant_config"> | null;
+  isOpen: boolean;
+  nextOpenInfo: string;
 }
 
-function useRestaurantStatus() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    const check = () => {
-      const now = new Date();
-      const hour = now.getHours();
-      setIsOpen(hour >= 19 && hour < 23);
-    };
-    check();
-    const interval = setInterval(check, 60_000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return isOpen;
-}
-
-export function MenuHeader({ config }: MenuHeaderProps) {
-  const isOpen = useRestaurantStatus();
+export function MenuHeader({ config, isOpen, nextOpenInfo }: MenuHeaderProps) {
 
   return (
     <>
