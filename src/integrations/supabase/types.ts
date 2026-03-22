@@ -62,6 +62,30 @@ export type Database = {
         }
         Relationships: []
       }
+      delivery_zones: {
+        Row: {
+          created_at: string
+          fee: number
+          id: string
+          is_active: boolean
+          neighborhood: string
+        }
+        Insert: {
+          created_at?: string
+          fee?: number
+          id?: string
+          is_active?: boolean
+          neighborhood: string
+        }
+        Update: {
+          created_at?: string
+          fee?: number
+          id?: string
+          is_active?: boolean
+          neighborhood?: string
+        }
+        Relationships: []
+      }
       menu_items: {
         Row: {
           category_id: string | null
