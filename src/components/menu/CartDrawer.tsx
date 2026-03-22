@@ -1,18 +1,22 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/hooks/useCart";
-import { Minus, Plus, ShoppingBag, MapPin, Loader2, Check, Bike, PersonStanding, CreditCard, Banknote, QrCode, Pencil, Tag, X, Copy, Share2, Clock } from "lucide-react";
+import { Minus, Plus, ShoppingBag, MapPin, Loader2, Check, Bike, PersonStanding, CreditCard, Banknote, QrCode, Pencil, Tag, X, Copy, Share2, Clock, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { formatBrazilianPhone, isValidBrazilianPhone } from "@/lib/phone-mask";
+import { generatePixPayload } from "@/lib/pix-payload";
 
 interface CartDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   whatsappNumber: string;
+  pixKey?: string;
+  restaurantName?: string;
+  restaurantCity?: string;
 }
 
 type Step = "cart" | "delivery" | "confirmation" | "payment";
