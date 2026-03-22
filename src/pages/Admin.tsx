@@ -166,6 +166,7 @@ export default function Admin() {
     zone3_fee: "12",
     delivery_time: "40-70 min",
     min_order: "30",
+    restaurant_address: "",
   });
   const [configLoaded, setConfigLoaded] = useState(false);
 
