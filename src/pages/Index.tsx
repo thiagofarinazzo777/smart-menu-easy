@@ -106,6 +106,18 @@ const Index = () => {
           />
 
           <main className="max-w-md mx-auto px-4 py-4 pb-24 space-y-6">
+            {!restaurantIsOpen && (
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-destructive/10 border border-destructive/20">
+                <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-destructive">Estamos fechados</p>
+                  <p className="text-xs text-muted-foreground">
+                    {nextOpenInfo || "Consulte nossos horários de funcionamento."}
+                    {" "}Você pode ver o cardápio, mas não pode fazer pedidos agora.
+                  </p>
+                </div>
+              </div>
+            )}
             {isLoading ? (
               <div className="space-y-3">
                 {[...Array(4)].map((_, i) => (
@@ -131,7 +143,7 @@ const Index = () => {
                   )}
                   <div className="space-y-3">
                     {group.items.map((item, i) => (
-                      <MenuItemCard key={item.id} item={item} index={gi * 10 + i} />
+                      <MenuItemCard key={item.id} item={item} index={gi * 10 + i} disabled={!restaurantIsOpen} />
                     ))}
                   </div>
                 </section>
