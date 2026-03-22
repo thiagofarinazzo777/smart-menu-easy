@@ -215,7 +215,7 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
     setShowPix(false); setCupom(""); setObservations({});
     setAddress({ cep: "", rua: "", numero: "", bairro: "", complemento: "", referencia: "", cidade: "", estado: "" });
     setStep("cart");
-    setDeliveryType(null); setDeliveryFee(null);
+    setDeliveryType(null); setDeliveryFee(null); setFeeUnavailable(false);
     onOpenChange(false);
   };
 
