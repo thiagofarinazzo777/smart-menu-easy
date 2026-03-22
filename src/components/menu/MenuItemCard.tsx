@@ -6,9 +6,10 @@ import { useCart } from "@/hooks/useCart";
 interface MenuItemCardProps {
   item: Tables<"menu_items">;
   index: number;
+  disabled?: boolean;
 }
 
-export function MenuItemCard({ item, index }: MenuItemCardProps) {
+export function MenuItemCard({ item, index, disabled }: MenuItemCardProps) {
   const { addItem } = useCart();
 
   const formatPrice = (price: number) =>
@@ -47,9 +48,14 @@ export function MenuItemCard({ item, index }: MenuItemCardProps) {
             {formatPrice(item.price)}
           </span>
           <motion.button
-            whileTap={{ scale: 0.92 }}
-            onClick={() => addItem(item)}
-            className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg"
+            whileTap={disabled ? undefined : { scale: 0.92 }}
+            onClick={() => !disabled && addItem(item)}
+            disabled={disabled}
+            className={`w-8 h-8 rounded-full flex items-center justify-center shadow-lg ${
+              disabled
+                ? "bg-muted text-muted-foreground cursor-not-allowed"
+                : "bg-primary text-primary-foreground"
+            }`}
           >
             <Plus className="w-4 h-4" />
           </motion.button>

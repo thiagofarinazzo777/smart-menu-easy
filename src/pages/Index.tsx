@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsRestaurantOpen } from "@/hooks/useBusinessHours";
 import { MenuHeader } from "@/components/menu/MenuHeader";
 import { CategoryBar } from "@/components/menu/CategoryBar";
 import { MenuItemCard } from "@/components/menu/MenuItemCard";
@@ -11,7 +12,7 @@ import { BottomNav, TabId } from "@/components/menu/BottomNav";
 import { CustomerAuthModal } from "@/components/menu/CustomerAuthModal";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Skeleton } from "@/components/ui/skeleton";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, AlertTriangle } from "lucide-react";
 
 const Index = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -19,6 +20,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState<TabId>("inicio");
   const [authOpen, setAuthOpen] = useState(false);
   const { user, profile, signOut } = useAuth();
+  const { isOpen: restaurantIsOpen, nextOpenInfo, hours } = useIsRestaurantOpen();
 
   const { data: config } = useQuery({
     queryKey: ["restaurant-config"],
@@ -70,7 +72,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background pb-16">
-      <MenuHeader config={config ?? null} />
+      <MenuHeader config={config ?? null} isOpen={restaurantIsOpen} nextOpenInfo={nextOpenInfo} />
 
       {/* User bar */}
       <div className="max-w-md mx-auto px-4 py-2 flex items-center justify-end gap-2">
@@ -104,6 +106,18 @@ const Index = () => {
           />
 
           <main className="max-w-md mx-auto px-4 py-4 pb-24 space-y-6">
+            {!restaurantIsOpen && (
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-destructive/10 border border-destructive/20">
+                <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-destructive">Estamos fechados</p>
+                  <p className="text-xs text-muted-foreground">
+                    {nextOpenInfo || "Consulte nossos horários de funcionamento."}
+                    {" "}Você pode ver o cardápio, mas não pode fazer pedidos agora.
+                  </p>
+                </div>
+              </div>
+            )}
             {isLoading ? (
               <div className="space-y-3">
                 {[...Array(4)].map((_, i) => (
@@ -129,7 +143,7 @@ const Index = () => {
                   )}
                   <div className="space-y-3">
                     {group.items.map((item, i) => (
-                      <MenuItemCard key={item.id} item={item} index={gi * 10 + i} />
+                      <MenuItemCard key={item.id} item={item} index={gi * 10 + i} disabled={!restaurantIsOpen} />
                     ))}
                   </div>
                 </section>

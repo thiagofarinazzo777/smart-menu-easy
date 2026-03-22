@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      business_hours: {
+        Row: {
+          close_time: string | null
+          created_at: string
+          day_of_week: number
+          id: string
+          is_closed: boolean
+          open_time: string | null
+        }
+        Insert: {
+          close_time?: string | null
+          created_at?: string
+          day_of_week: number
+          id?: string
+          is_closed?: boolean
+          open_time?: string | null
+        }
+        Update: {
+          close_time?: string | null
+          created_at?: string
+          day_of_week?: number
+          id?: string
+          is_closed?: boolean
+          open_time?: string | null
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string

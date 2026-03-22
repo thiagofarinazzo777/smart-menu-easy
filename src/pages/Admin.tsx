@@ -12,7 +12,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, Plus, Pencil, Trash2, Flame } from "lucide-react";
+import { LogOut, Plus, Pencil, Trash2, Flame, Clock } from "lucide-react";
+import { BusinessHoursEditor } from "@/components/admin/BusinessHoursEditor";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 import { useEffect } from "react";
 
@@ -221,6 +222,7 @@ export default function Admin() {
           <TabsList className="w-full mb-6">
             <TabsTrigger value="items" className="flex-1">Cardápio</TabsTrigger>
             <TabsTrigger value="categories" className="flex-1">Categorias</TabsTrigger>
+            <TabsTrigger value="hours" className="flex-1"><Clock className="w-3.5 h-3.5 mr-1" />Horários</TabsTrigger>
             <TabsTrigger value="settings" className="flex-1">Config</TabsTrigger>
           </TabsList>
 
@@ -285,6 +287,11 @@ export default function Admin() {
                 </CardContent>
               </Card>
             ))}
+          </TabsContent>
+
+          {/* HOURS TAB */}
+          <TabsContent value="hours">
+            <BusinessHoursEditor />
           </TabsContent>
 
           {/* SETTINGS TAB */}
