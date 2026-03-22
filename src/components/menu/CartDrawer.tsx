@@ -198,9 +198,9 @@ export function CartDrawer({ open, onOpenChange, whatsappNumber, pixKey = "", re
       ? `${address.rua}, ${address.numero} - ${address.bairro}, ${address.cidade} - ${address.estado}${address.complemento ? ` (${address.complemento})` : ""}${address.referencia ? `\nReferência: ${address.referencia}` : ""}`
       : "Retirada no estabelecimento";
 
-    const pagamentoInfo = paymentType === "pix" ? "PIX" : paymentType === "dinheiro" ? `Dinheiro${troco ? ` (Troco para R$ ${troco})` : ""}` : paymentType === "credito" ? "Cartão de crédito" : "Cartão de débito";
+    const feeText = deliveryType === "entrega" && deliveryFee !== null && deliveryFee > 0 ? formatPrice(deliveryFee) : "Grátis";
 
-    const message = `🛒 *Novo Pedido!*\n\n*Cliente:* ${customerName}\n*Telefone:* ${customerPhone}\n\n*Itens:*\n${itemLines}\n\n*Subtotal:* ${formatPrice(total)}\n*Entrega:* Grátis\n*Total:* ${formatPrice(total)}${cupom ? `\n*Cupom:* ${cupom}` : ""}\n\n*Entrega:* ${enderecoInfo}\n*Pagamento:* ${pagamentoInfo}`;
+    const message = `🛒 *Novo Pedido!*\n\n*Cliente:* ${customerName}\n*Telefone:* ${customerPhone}\n\n*Itens:*\n${itemLines}\n\n*Subtotal:* ${formatPrice(total)}\n*Entrega:* ${feeText}\n*Total:* ${formatPrice(orderTotal)}${cupom ? `\n*Cupom:* ${cupom}` : ""}\n\n*Entrega:* ${enderecoInfo}\n*Pagamento:* ${pagamentoInfo}`;
 
     const phone = whatsappNumber.replace(/\D/g, "");
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
