@@ -171,6 +171,9 @@ export default function Admin() {
         description: config.description ?? "",
         whatsapp_number: config.whatsapp_number ?? "",
         logo_url: config.logo_url ?? "",
+        zone1_fee: String(config.zone1_fee ?? 5),
+        zone2_fee: String(config.zone2_fee ?? 8),
+        zone3_fee: String(config.zone3_fee ?? 12),
       });
       setConfigLoaded(true);
     }
