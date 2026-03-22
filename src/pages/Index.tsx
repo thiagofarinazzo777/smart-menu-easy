@@ -16,6 +16,7 @@ import { User, LogOut, AlertTriangle } from "lucide-react";
 
 const Index = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>("inicio");
   const [authOpen, setAuthOpen] = useState(false);
