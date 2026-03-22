@@ -62,7 +62,7 @@ export function MenuHeader({ config, isOpen, nextOpenInfo }: MenuHeaderProps) {
           ) : (
             <span className="inline-flex items-center gap-2 bg-muted text-muted-foreground text-xs font-semibold px-3 py-1.5 rounded-full">
               <span className="h-2 w-2 rounded-full bg-red-400" />
-              Fechado · Abre às 19:00
+              Fechado · {nextOpenInfo || "Abre às 19:00"}
             </span>
           )}
 
