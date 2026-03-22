@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { LogOut, Plus, Pencil, Trash2, Flame, Clock } from "lucide-react";
 import { BusinessHoursEditor } from "@/components/admin/BusinessHoursEditor";
+import { DeliveryZonesEditor } from "@/components/admin/DeliveryZonesEditor";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 import { useEffect } from "react";
 
