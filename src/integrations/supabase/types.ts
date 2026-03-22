@@ -164,6 +164,9 @@ export type Database = {
           pix_key: string | null
           updated_at: string
           whatsapp_number: string | null
+          zone1_fee: number
+          zone2_fee: number
+          zone3_fee: number
         }
         Insert: {
           created_at?: string
@@ -174,6 +177,9 @@ export type Database = {
           pix_key?: string | null
           updated_at?: string
           whatsapp_number?: string | null
+          zone1_fee?: number
+          zone2_fee?: number
+          zone3_fee?: number
         }
         Update: {
           created_at?: string
@@ -184,6 +190,9 @@ export type Database = {
           pix_key?: string | null
           updated_at?: string
           whatsapp_number?: string | null
+          zone1_fee?: number
+          zone2_fee?: number
+          zone3_fee?: number
         }
         Relationships: []
       }
