@@ -12,7 +12,7 @@ export function CategoryBar({ categories, activeCategory, onSelect }: CategoryBa
 
   return (
     <div className="sticky top-[73px] z-20 bg-background/80 backdrop-blur-lg border-b">
-      <div className="max-w-md mx-auto px-4 py-2 flex gap-2 overflow-x-auto no-scrollbar">
+      <div className="max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-2 flex gap-2 overflow-x-auto no-scrollbar">
         <button
           onClick={() => onSelect(null)}
           className={cn(

@@ -91,7 +91,7 @@ const Index = () => {
       />
 
       {/* User bar */}
-      <div className="max-w-md mx-auto px-4 py-1 flex items-center justify-end gap-2">
+      <div className="max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-1 flex items-center justify-end gap-2">
         {user ? (
           <button onClick={signOut} className="text-muted-foreground hover:text-foreground">
             <LogOut className="w-4 h-4" />
@@ -115,7 +115,7 @@ const Index = () => {
             onSelect={setActiveCategory}
           />
 
-          <main className="max-w-md mx-auto px-4 py-4 pb-24 space-y-6">
+          <main className="max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 pb-24 space-y-6">
             {!restaurantIsOpen && (
               <div className="flex items-center gap-3 p-4 rounded-xl bg-destructive/10 border border-destructive/20">
                 <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0" />
@@ -151,7 +151,7 @@ const Index = () => {
                   {group.category && !activeCategory && (
                     <h2 className="text-base font-bold mb-3">{group.category.name}</h2>
                   )}
-                  <div className="space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {group.items.map((item, i) => (
                       <MenuItemCard key={item.id} item={item} index={gi * 10 + i} />
                     ))}
@@ -164,13 +164,13 @@ const Index = () => {
       )}
 
       {activeTab === "promocoes" && (
-        <main className="max-w-md mx-auto px-4 py-8 text-center">
+        <main className="max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-8 text-center">
           <p className="text-muted-foreground text-sm">Nenhuma promoção ativa no momento.</p>
         </main>
       )}
 
       {activeTab === "pedidos" && (
-        <main className="max-w-md mx-auto px-4 py-8 text-center">
+        <main className="max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-8 text-center">
           {user ? (
             <p className="text-muted-foreground text-sm">Você ainda não tem pedidos.</p>
           ) : (
@@ -185,7 +185,7 @@ const Index = () => {
       )}
 
       {activeTab === "perfil" && (
-        <main className="max-w-md mx-auto px-4 py-8">
+        <main className="max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-8">
           {user ? (
             <div className="space-y-4">
               <div className="flex items-center gap-3">
