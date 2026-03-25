@@ -54,7 +54,7 @@ export function MenuHeader({ config, isOpen, nextOpenInfo, searchQuery, onSearch
       </div>
 
       {/* Restaurant info card — compact */}
-      <div className="max-w-md mx-auto px-4 pt-3 pb-1">
+      <div className="max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl mx-auto px-4 pt-3 pb-1">
         <div className="bg-card rounded-2xl shadow-sm border border-border px-5 py-3 flex flex-col items-center gap-1">
           <h2 className="text-lg font-bold text-card-foreground text-center">{config?.name || "Ouro & Brasa"}</h2>
           <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
@@ -83,7 +83,7 @@ export function MenuHeader({ config, isOpen, nextOpenInfo, searchQuery, onSearch
       </div>
 
       {/* Delivery info card */}
-      <div className="max-w-md mx-auto px-4 py-2">
+      <div className="max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-2">
         <div className="bg-card rounded-2xl shadow-sm border border-border p-4 flex flex-col items-center gap-3">
           <div className="flex items-center justify-center gap-2">
             <button className="inline-flex items-center justify-center gap-1.5 bg-secondary text-secondary-foreground text-xs font-medium px-4 py-2 rounded-xl border border-border shadow-sm">
@@ -101,7 +101,7 @@ export function MenuHeader({ config, isOpen, nextOpenInfo, searchQuery, onSearch
       </div>
 
       {/* Greeting + Search bar */}
-      <div className="max-w-md mx-auto px-4 py-2">
+      <div className="max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-2">
         {greeting && (
           <p className="text-sm font-medium text-foreground mb-2">{greeting}</p>
         )}
